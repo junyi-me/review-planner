@@ -27,7 +27,7 @@
       return;
     }
 
-    goto(`${postRegistUrl}?${REGIST_DONE_PARAM}=true`);
+    goto(`${postRegistUrl}?${REGIST_DONE_PARAM}`);
   }
 </script>
 

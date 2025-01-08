@@ -4,7 +4,6 @@ export async function obtain(url: string, options: RequestInit = {}) {
   };
 
   const newOpts: RequestInit = {
-    method: "GET",
     ...options,
     headers: {
       ...defaultHeaders,

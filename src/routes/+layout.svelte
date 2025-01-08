@@ -8,16 +8,29 @@
   <title>Review Planner</title>
 </svelte:head>
 
-<nav>
-  {#if $loggedIn}
+<div class="container">
+  <nav>
     <a href="/">Top</a>
-    <a href="/app">Dashboard</a>
-    <a href="/auth/logout">Logout</a>
-  {:else}
-    <a href="/auth/login">Login</a>
-    <a href="/auth/regist">Sign up</a>
-  {/if}
-</nav>
+    {#if $loggedIn}
+      <a href="/app">Dashboard</a>
+    {/if}
+  </nav>
+
+  <nav>
+    {#if $loggedIn}
+      <a href="/auth/logout">Logout</a>
+    {:else}
+      <a href="/auth/login">Login</a>
+    {/if}
+  </nav>
+</div>
 
 {@render children()}
+
+<style>
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
 
