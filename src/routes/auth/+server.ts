@@ -1,8 +1,8 @@
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
 import { eq } from 'drizzle-orm';
-import type { RequestEvent } from "../$types";
 import { verifyPassword } from "$lib/server/password";
+import type { RequestEvent } from "@sveltejs/kit";
 
 type LoginReq = {
   email: string;

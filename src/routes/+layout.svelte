@@ -24,7 +24,7 @@
 
   <nav>
     {#if $loggedIn}
-      <a href="/auth/logout">Logout</a>
+      <a href="/auth/logout" data-sveltekit-preload-data="off">Logout</a>
     {:else}
       <a href="/auth/login">Login</a>
     {/if}
