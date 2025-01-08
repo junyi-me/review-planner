@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 if (!env.ACCESS_TOKEN_SECRET) throw new Error('ACCESS_TOKEN_SECRET is not set');
 
-type TokenPayload = { userId: number };
+export type TokenPayload = { userId: number };
 type ExpireIn = "1h" | "1d" | "30d";
 
 export function signToken(userId: number, expiresIn: ExpireIn = "1h") {

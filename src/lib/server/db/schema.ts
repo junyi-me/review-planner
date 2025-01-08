@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, type InferSelectModel } from "drizzle-orm";
 import { pgTable, serial, text, integer, timestamp, json } from "drizzle-orm/pg-core";
 
 const commonFields = {
@@ -23,7 +23,7 @@ export const project = pgTable("project", {
   ownerId: integer("owner_id").notNull(),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  offsetMins: json("offset_mins").$type<number[]>().notNull(),
+  offsetDays: json("offset_days").$type<number[]>().notNull(),
 });
 
 export const projectRelation = relations(project, ({ one, many }) => ({
@@ -61,4 +61,9 @@ export const iterationRelation = relations(iteration, ({ one }) => ({
     references: [task.id],
   }),
 }));
+
+export type UserRow = InferSelectModel<typeof user>;
+export type ProjectRow = InferSelectModel<typeof project>;
+export type TaskRow = InferSelectModel<typeof task>;
+export type IterationRow = InferSelectModel<typeof iteration>;
 

@@ -10,10 +10,7 @@
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    const form = event.target;
-    if (form == null || !(form instanceof HTMLFormElement)) {
-      return;
-    }
+    const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
     const email = formData.get("email");

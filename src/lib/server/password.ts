@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Set the cost factor (higher is more secure but slower)
 const SALT_ROUNDS = 10;

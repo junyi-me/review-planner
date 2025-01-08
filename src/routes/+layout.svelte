@@ -1,4 +1,6 @@
 <script>
+  import { navigating } from "$app/state";
+  import Loading from "$lib/component/Loading.svelte";
   import { loggedIn } from "$lib/store/user.client";
 
   let { children } = $props();
@@ -7,6 +9,10 @@
 <svelte:head>
   <title>Review Planner</title>
 </svelte:head>
+
+{#if navigating.type}
+  <Loading fullScreen />
+{/if}
 
 <div class="container">
   <nav>
