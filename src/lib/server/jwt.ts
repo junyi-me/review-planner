@@ -3,16 +3,21 @@ import jwt from 'jsonwebtoken';
 
 if (!env.ACCESS_TOKEN_SECRET) throw new Error('ACCESS_TOKEN_SECRET is not set');
 
-type Payload = { userId: number };
+type TokenPayload = { userId: number };
+type ExpireIn = "1h" | "1d" | "30d";
 
-export function signToken(userId: number) {
-  const payload: Payload = { userId };
-  const opts = { expiresIn: "1h" };
+export function signToken(userId: number, expiresIn: ExpireIn = "1h") {
+  const payload: TokenPayload = { userId };
+  const opts = { expiresIn };
 
   return jwt.sign(payload, env.ACCESS_TOKEN_SECRET!, opts);
 }
 
 export function verifyToken(token: string) {
-  return jwt.verify(token, env.ACCESS_TOKEN_SECRET!) as Payload;
+  try {
+    return jwt.verify(token, env.ACCESS_TOKEN_SECRET!) as TokenPayload;
+  } catch (e) {
+    return null;
+  }
 }
 

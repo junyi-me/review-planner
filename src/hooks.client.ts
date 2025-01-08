@@ -11,7 +11,6 @@ export const handleFetch = async ({ fetch }: { fetch: typeof window.fetch }) => 
 
   return async (input: RequestInfo, init?: RequestInit) => {
     const response = await fetch(input, init);
-    console.log(response.status);
 
     if (response.status === 401) {
       const refreshed = await refreshToken();

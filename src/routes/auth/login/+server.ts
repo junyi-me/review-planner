@@ -3,8 +3,8 @@ import { user } from "$lib/server/db/schema";
 import { eq } from 'drizzle-orm';
 import type { RequestEvent } from "./$types";
 import { verifyPassword } from "$lib/server/password";
-import { COOKIE } from "$lib/server/const";
 import { signToken } from "$lib/server/jwt";
+import { COOKIE, setAccessCookie } from "$lib/server/cookie";
 
 type LoginReq = {
   email: string;
@@ -28,7 +28,8 @@ export async function POST({ request, cookies }: RequestEvent) {
     return new Response(null, { status: 401 });
   }
 
-  cookies.set(COOKIE.ACCESS_TOKEN.key, signToken(dbUser.id), COOKIE.ACCESS_TOKEN.options);
+  setAccessCookie(cookies, dbUser.id);
+  cookies.set(COOKIE.REFRESH_TOKEN.key, signToken(dbUser.id, "30d"), COOKIE.REFRESH_TOKEN.options);
 
   return new Response(JSON.stringify({
     name: dbUser.name,

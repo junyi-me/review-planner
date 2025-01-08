@@ -1,4 +1,4 @@
-import { COOKIE } from "$lib/server/const";
+import { COOKIE } from "$lib/server/cookie";
 import type { Cookies } from "@sveltejs/kit";
 
 export function deleteAccessToken(cookies: Cookies) {
