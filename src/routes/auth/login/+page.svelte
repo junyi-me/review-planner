@@ -39,7 +39,7 @@
 <h1>Login</h1>
 
 {#if justRegistered}
-  <p class="regist">Sign up completed. Please login.</p>
+  <p class="regist">Registration complete. Please login.</p>
 {/if}
 
 <form on:submit={handleSubmit}>
