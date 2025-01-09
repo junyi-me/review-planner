@@ -2,6 +2,7 @@
   import { navigating } from "$app/state";
   import Loading from "$lib/component/Loading.svelte";
   import { loggedIn } from "$lib/store/user.client";
+  import '@fortawesome/fontawesome-free/css/all.min.css'
 
   let { children } = $props();
 </script>

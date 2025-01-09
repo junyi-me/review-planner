@@ -1,7 +1,8 @@
 <script lang="ts">
   import { obtain } from "$lib/api.client";
+  import { DEFAULT_OFFSETS } from "$lib/util";
 
-  let offsetDays = $state([1, 7, 14]); // TODO from last created project
+  let offsetDays = $state(DEFAULT_OFFSETS); // TODO from last created project
 
   function handleOffsetDayChange(i: number, e: Event) {
     const target = e.target as HTMLInputElement;

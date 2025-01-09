@@ -9,7 +9,11 @@ async function refreshToken() {
 };
 
 
-export async function obtain(url: string, options: RequestInit = {}) {
+export async function obtain(url?: string, options: RequestInit = {}) {
+  if (!url) {
+    url = window.location.pathname;
+  }
+
   const defaultHeaders = {
     "Content-Type": "application/json",
     "Accept": "application/json",

@@ -24,6 +24,8 @@
   }
 
   .spinner {
+    max-width: 100%;
+    max-height: 100%;
     width: 50px;
     height: 50px;
     border: 5px solid #f3f3f3;

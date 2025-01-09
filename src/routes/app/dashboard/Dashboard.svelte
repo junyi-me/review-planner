@@ -16,7 +16,9 @@
   <tbody>
     {#each projects as project}
       <tr>
-        <td>{project.name}</td>
+        <td>
+          <a href="/app/project/{project.id}/">{project.name}</a>
+        </td>
         <td>{project.description}</td>
         <td>{project.createdAt}</td>
       </tr>
@@ -24,5 +26,5 @@
   </tbody>
 </table>
 
-<a href="/app/dashboard/create">Create project</a>
+<a href="/app/project/create">Create project</a>
 
