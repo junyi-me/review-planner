@@ -1,6 +1,7 @@
 <script>
   import { navigating } from "$app/state";
   import Loading from "$lib/component/Loading.svelte";
+  import Toast from "$lib/component/Toast.svelte";
   import { loggedIn } from "$lib/store/user.client";
   import '@fortawesome/fontawesome-free/css/all.min.css'
 
@@ -10,6 +11,8 @@
 <svelte:head>
   <title>Review Planner</title>
 </svelte:head>
+
+<Toast />
 
 {#if navigating.type}
   <Loading fullScreen />

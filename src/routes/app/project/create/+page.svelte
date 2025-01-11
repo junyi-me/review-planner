@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { obtain } from "$lib/api.client";
   import { DEFAULT_OFFSETS } from "$lib/util";
 
@@ -18,7 +19,7 @@
     const name = formData.get("name");
     const description = formData.get("description");
 
-    const resp = await obtain("/app/dashboard/create", {
+    const resp = await obtain(undefined, {
       method: "POST",
       body: JSON.stringify({ name, description, offsetDays }),
     });
@@ -28,7 +29,10 @@
     }
 
     const data = await resp.json();
-    console.log(data);
+    const { id } = data;
+    console.log("Created project", id);
+
+    goto(`/app/project/${id}`);
   }
 </script>
 
@@ -68,7 +72,10 @@
       <tr>
         <td></td>
         <td>
-          <button type="button" onclick={() => offsetDays = [...offsetDays, 0]}>Add iteration</button>
+          <button type="button" 
+            onclick={() => offsetDays = [...offsetDays, offsetDays[offsetDays.length-1] * 2]}>
+            Add iteration
+          </button>
         </td>
       </tr>
     </tbody>

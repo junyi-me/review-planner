@@ -1,6 +1,4 @@
-import type { IterationRow, TaskRow } from "$lib/server/db/schema";
+import type { IterationRow } from "$lib/server/db/schema";
 
-export type TaskIterations = TaskRow & {
-  iterations: IterationRow[];
-}
+export type IterCanBeDone = IterationRow & { canbeDone: boolean };
 

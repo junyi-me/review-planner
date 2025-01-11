@@ -4,10 +4,15 @@ import { and, eq } from 'drizzle-orm';
 import type { RequestEvent } from "@sveltejs/kit";
 import type { CreateTaskReq } from "./util";
 import { getTokenPayload } from "$lib/server/util";
+import { MAX_ITERATIONS } from "$lib/const";
 
 export async function POST({ locals, request }: RequestEvent) {
   const body = await request.json() as CreateTaskReq;
   const user = getTokenPayload(locals);
+
+  if (body.iterations.length > MAX_ITERATIONS) {
+    return new Response(null, { status: 400 });
+  }
 
   const projects = await db.select().from(project).where(and(eq(project.id, body.projectId), eq(project.ownerId, user.userId)));
   if (projects.length !== 1) {

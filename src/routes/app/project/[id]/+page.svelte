@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { TaskIterations } from '$lib/server/db/query';
   import type { ProjectRow } from '$lib/server/db/schema';
-  import IterationCell from './IterationCell.svelte';
-  import type { TaskIterations } from './util';
+  import TaskRow from './TaskRow.svelte';
 
   type PageProps = {
     project: ProjectRow;
@@ -15,54 +15,30 @@
 <p>{data.project.description}</p>
 
 <h3>Tasks</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan={99}>Iterations</th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each data.taskIters as task}
+<div class="striped">
+  <table>
+    <thead>
       <tr>
-        <td>
-          {#if task.doneAt}
-            <span>✅</span>
-          {/if}
-          <a href="/app/task/{task.id}/">{task.name}</a>
-          {#if task.link}
-            <a href={task.link} target="_blank" aria-label="external">
-              <i class="fas fa-external-link-alt">
-            </a>
-          {/if}
-        </td>
-        {#each task.iterations as iteration}
-          <IterationCell {iteration} />
-        {/each}
+        <th>#</th>
+        <th>Name</th>
+        <th colspan={99}>Iterations</th>
       </tr>
-    {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {#if data.taskIters.length === 0}
+        <tr>
+          <td colspan={99} class="nocontent">No tasks</td>
+        </tr>
+      {/if}
+      {#each data.taskIters as task, i}
+        <tr>
+          <td>{i+1}</td>
+          <TaskRow {task} />
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 
 <a href="/app/task/create?projId={data.project.id}">Create new task</a>
-
-<style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-</style>
 

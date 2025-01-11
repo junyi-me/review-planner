@@ -1,11 +1,15 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { obtain } from "$lib/api.client";
+  import { setToastState } from "$lib/store/toast.svelte";
   import { user } from "$lib/store/user.client";
+  import { onMount } from "svelte";
   import { REGIST_DONE_PARAM } from "../regist/util";
 
   const justRegistered = page.url.searchParams.has(REGIST_DONE_PARAM);
+  onMount(() => {
+    if (justRegistered) setToastState({ type: "success", message: "Registration complete. Please log in." });
+  });
 
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
@@ -16,17 +20,18 @@
     const email = formData.get("email");
     const password = formData.get("password");
 
-    const resp = await obtain("/auth/login", {
+    const resp = await fetch("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
 
     if (!resp.ok) {
-      throw new Error("Login failed");
+      console.error("Login failed", resp);
+      setToastState({ type: "error", message: "Login failed." })
+      return;
     }
 
     const data = await resp.json();
-
     user.set({
       name: data.name,
       email: data.email,
@@ -37,10 +42,6 @@
 </script>
 
 <h1>Login</h1>
-
-{#if justRegistered}
-  <p class="regist">Registration complete. Please login.</p>
-{/if}
 
 <form on:submit={handleSubmit}>
   <label for="email">Email</label>
@@ -54,10 +55,4 @@
   <button type="submit">Login</button>
   <a href="/auth/regist">Sign up</a>
 </form>
-
-<style>
-  .regist {
-    color: green;
-  }
-</style>
 

@@ -2,8 +2,10 @@
   import { goto } from "$app/navigation";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
+  import { MAX_ITERATIONS } from "$lib/const";
   import type { ProjectRow } from "$lib/server/db/schema";
-  import { formatDateInput, formatDateLocale } from "$lib/util";
+  import { setToastState } from "$lib/store/toast.svelte";
+  import { formatDateInput, formatDateLocale, getLinkFromClipboard } from "$lib/util";
   import type { CreateTaskReq } from "./util";
 
   let { data }: { data: { project: ProjectRow } } = $props();
@@ -37,13 +39,19 @@
     }
 
     const res = await obtain(undefined, { method: "POST", body: JSON.stringify(body) });
-    if (res.ok) {
-      goto(`/app/project/${project.id}/`);
-    } else {
+    if (!res.ok) {
       loading = false;
-      alert("Failed to create task");
-      console.error("Failed to create task");
+      setToastState({ type: "error", message: "Failed to create task" })
     }
+
+    goto(`/app/project/${project.id}/`);
+  }
+
+  let linkInput: HTMLInputElement;
+  async function handlePaste(e: ClipboardEvent) {
+    const url = await getLinkFromClipboard(e);
+    if (url) linkInput.value = url;
+    setToastState({ type: "success", message: "Updated link" });
   }
 </script>
 
@@ -56,7 +64,7 @@
 
 <form onsubmit={handleSubmit}>
   <label for="name">Name</label>
-  <input name="name" type="text" required />
+  <input name="name" type="text" onpaste={handlePaste} required />
   <br />
 
   <label for="description">Description</label>
@@ -64,7 +72,7 @@
   <br />
 
   <label for="link">Link</label>
-  <input name="link" type="url" />
+  <input name="link" type="url" bind:this={linkInput} />
   <br />
   <br />
 
@@ -107,7 +115,11 @@
       <tr>
         <td></td>
         <td>
-          <button type="button" onclick={() => offsets = [...offsets, 2*offsets[offsets.length-1]]}>Add iteration</button>
+          <button type="button" 
+            disabled={iterations.length >= MAX_ITERATIONS}
+            onclick={() => offsets = [...offsets, 2*offsets[offsets.length-1]]}>
+            Add iteration
+          </button>
         </td>
       </tr>
     </tbody>

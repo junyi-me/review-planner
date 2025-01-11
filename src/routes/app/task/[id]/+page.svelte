@@ -24,20 +24,24 @@
 <p>{task.description}</p>
 
 <h2>Iterations</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Planned</th>
-      <th>Done</th>
-    </tr>
-  </thead>
-  <tbody>
-    {#each iterations as iter}
+<div class="striped">
+  <table>
+    <thead>
       <tr>
-        <td>{iter.plannedAt}</td>
-        <td>{iter.doneAt ?? "(Not yet)"}</td>
+        <th>#</th>
+        <th>Planned</th>
+        <th>Done</th>
       </tr>
-    {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {#each iterations as iter, i}
+        <tr>
+          <td>{i+1}</td>
+          <td>{iter.plannedAt}</td>
+          <td>{iter.doneAt ?? "(Not yet)"}</td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 

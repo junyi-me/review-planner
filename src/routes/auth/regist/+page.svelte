@@ -1,6 +1,5 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { obtain } from "$lib/api.client";
   import { REGIST_DONE_PARAM } from "./util";
 
   const postRegistUrl = '/auth/login';
@@ -17,7 +16,7 @@
     const password = formData.get('password');
     const name = formData.get('nickname');
 
-    const resp = await obtain('/auth/regist', {
+    const resp = await fetch('/auth/regist', {
       method: 'POST',
       body: JSON.stringify({ email, password, name }),
     });
