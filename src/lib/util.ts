@@ -23,6 +23,10 @@ export function formatStrDateLocale(dstr: string): string {
   return formatDateLocale(new Date(dstr));
 }
 
+export function formatStrDateInput(dstr: string): string {
+  return formatDateInput(new Date(dstr));
+}
+
 export async function getLinkFromClipboard(e: ClipboardEvent) {
   if (!e.clipboardData) return;
 

@@ -1,10 +1,11 @@
 import { db } from "$lib/server/db";
-import { iteration, project, task } from "$lib/server/db/schema";
+import { project, task, type Iteration } from "$lib/server/db/schema";
 import { and, eq } from 'drizzle-orm';
 import type { RequestEvent } from "@sveltejs/kit";
-import type { CreateTaskReq } from "./util";
 import { getTokenPayload } from "$lib/server/util";
 import { MAX_ITERATIONS } from "$lib/const";
+import { formatStrDateInput } from "$lib/util";
+import type { CreateTaskReq } from "$lib/api";
 
 export async function POST({ locals, request }: RequestEvent) {
   const body = await request.json() as CreateTaskReq;
@@ -19,26 +20,20 @@ export async function POST({ locals, request }: RequestEvent) {
     return new Response(null, { status: 404 });
   }
 
-  await db.transaction(async (db) => {
-    const newTasks = await db.insert(task).values({
-      projectId: body.projectId,
-      name: body.name,
-      description: body.description,
-      link: body.link,
-    }).returning({ id: task.id });
-    if (newTasks.length !== 1) {
-      console.error("Failed to create task");
-      return new Response(null, { status: 500 });
-    }
-    const newTask = newTasks[0];
-
-    body.iterations.forEach(async (iter) => {
-      await db.insert(iteration).values({
-        taskId: newTask.id,
-        plannedAt: iter,
-      });
-    });
-  });
+  const newTasks = await db.insert(task).values({
+    projectId: body.projectId,
+    name: body.name,
+    description: body.description,
+    link: body.link,
+    iterations: body.iterations.map(date => ({
+      plannedAt: formatStrDateInput(date),
+      done: false,
+    })) as Iteration[],
+  }).returning({ id: task.id });
+  if (newTasks.length !== 1) {
+    console.error("Failed to create task");
+    return new Response(null, { status: 500 });
+  }
 
   return new Response(null, { status: 201 });
 }

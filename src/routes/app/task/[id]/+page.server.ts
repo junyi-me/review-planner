@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { iteration, project, task } from "$lib/server/db/schema";
+import { project, task } from "$lib/server/db/schema";
 import { and, eq } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
@@ -17,8 +17,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   }
   const taskProj = taskProjs[0];
 
-  const iterations = await db.select().from(iteration).where(eq(iteration.taskId, taskId)).orderBy(iteration.plannedAt);
-
-  return { project: taskProj.project, task: taskProj.task, iterations };
+  return { project: taskProj.project, task: taskProj.task };
 }
 

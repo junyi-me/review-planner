@@ -1,12 +1,12 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import type { CreateTaskReq } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
   import { MAX_ITERATIONS } from "$lib/const";
   import type { ProjectRow } from "$lib/server/db/schema";
   import { setToastState } from "$lib/store/toast.svelte";
   import { formatDateInput, formatDateLocale, getLinkFromClipboard } from "$lib/util";
-  import type { CreateTaskReq } from "./util";
 
   let { data }: { data: { project: ProjectRow } } = $props();
   const project = data.project;

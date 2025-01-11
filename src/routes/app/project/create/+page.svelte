@@ -30,7 +30,6 @@
 
     const data = await resp.json();
     const { id } = data;
-    console.log("Created project", id);
 
     goto(`/app/project/${id}`);
   }

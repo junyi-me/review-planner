@@ -1,14 +1,13 @@
 <script lang="ts">
-  import type { IterationRow, ProjectRow, TaskRow } from "$lib/server/db/schema";
+  import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
 
   type PageProps = {
     project: ProjectRow;
     task: TaskRow;
-    iterations: IterationRow[];
   };
 
   let { data }: { data: PageProps } = $props();
-  let { project, task, iterations } = data;
+  let { project, task } = data;
 </script>
 
 <a href="/app/project/{project.id}/">Back to project</a>
@@ -34,11 +33,11 @@
       </tr>
     </thead>
     <tbody>
-      {#each iterations as iter, i}
+      {#each task.iterations as iter, i}
         <tr>
           <td>{i+1}</td>
           <td>{iter.plannedAt}</td>
-          <td>{iter.doneAt ?? "(Not yet)"}</td>
+          <td>{iter.done ? "✅" : "❌"}</td>
         </tr>
       {/each}
     </tbody>

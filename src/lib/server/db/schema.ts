@@ -34,39 +34,29 @@ export const projectRelation = relations(project, ({ one, many }) => ({
   tasks: many(task),
 }));
 
+export type Iteration = {
+  plannedAt: string;
+  done: boolean;
+}
 export const task = pgTable("task", {
   ...commonFields,
   name: text("name").notNull(),
   projectId: integer("project_id").notNull(),
   link: text("link"),
   description: text("description"),
+  nextIterAt: date("next_iter_at"),
   doneAt: date("done_at"),
+  iterations: json("iters").$type<Iteration[]>().notNull(),
 });
 
-export const taskRelation = relations(task, ({ one, many }) => ({
+export const taskRelation = relations(task, ({ one }) => ({
   project: one(project, {
     fields: [task.projectId],
     references: [project.id],
-  }),
-  iterations: many(iteration),
-}));
-
-export const iteration = pgTable("iteration", {
-  ...commonFields,
-  taskId: integer("task_id").notNull(),
-  plannedAt: date("planned_at").notNull(),
-  doneAt: date("done_at"),
-});
-
-export const iterationRelation = relations(iteration, ({ one }) => ({
-  task: one(task, {
-    fields: [iteration.taskId],
-    references: [task.id],
   }),
 }));
 
 export type UserRow = InferSelectModel<typeof user>;
 export type ProjectRow = InferSelectModel<typeof project>;
 export type TaskRow = InferSelectModel<typeof task>;
-export type IterationRow = InferSelectModel<typeof iteration>;
 

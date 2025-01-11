@@ -1,4 +1,7 @@
-import type { IterationRow } from "$lib/server/db/schema";
+import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
 
-export type IterCanBeDone = IterationRow & { canbeDone: boolean };
+export type PageProps = {
+  project: ProjectRow;
+  tasks: TaskRow[];
+};
 
