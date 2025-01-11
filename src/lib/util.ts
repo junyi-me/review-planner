@@ -19,6 +19,10 @@ export function formatDateInput(date: Date): string {
   return formattedDate;
 }
 
+export function getCurrentDateInputFormat(): string {
+  return formatDateInput(new Date());
+}
+
 export function formatStrDateLocale(dstr: string): string {
   return formatDateLocale(new Date(dstr));
 }

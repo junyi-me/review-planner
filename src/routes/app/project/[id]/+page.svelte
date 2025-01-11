@@ -14,7 +14,7 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Name</th>
+        <th>Task</th>
         <th colspan={99}>Iterations</th>
       </tr>
     </thead>

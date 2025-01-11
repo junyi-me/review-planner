@@ -1,26 +1,54 @@
 <script lang="ts">
+  import type { PutTaskReq, PutTaskResp } from "$lib/api";
+  import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
-  import type { TaskRow } from "$lib/server/db/schema";
+  import type { Iteration, TaskRow } from "$lib/server/db/schema";
   import { setToastState } from "$lib/store/toast.svelte";
-  import { formatStrDateLocale } from "$lib/util";
+  import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
+  import { convertIters } from "./util";
 
-  let { task }: { task: TaskRow } = $props();
-  let { iterations } = $state(task);
+  let { task: taskProps }: { task: TaskRow } = $props();
+  let task = $state(taskProps);
+  let iterations = $derived(task.iterations);
 
-  let editing = $state(false);
+  type IterCanbeDone = Iteration & { canToggle: boolean };
+  let iters: IterCanbeDone[] = $derived.by(() => convertIters(iterations));
+
+  let showDetails = $state(false);
   let loading = $state(false);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getCurrentDateInputFormat();
 
-  async function save() {
-    editing = false;
+  async function toggleDone(i: number) {
     loading = true;
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const iter = iterations[i];
+    iter.done = !iter.done;
+    if (iter.done) iter.plannedAt = getCurrentDateInputFormat();
 
-    setToastState({ type: "success", message: "Saved" });
+    const body: PutTaskReq = { task };
+    const resp = await obtain(`/app/task/${task.id}/`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+      console.error("Failed to save", resp);
+      setToastState({ type: "error", message: "Failed to save" });
+      setTimeout(() => window.location.reload(), 500);
+      return;
+    }
+
+    const data = await resp.json() as PutTaskResp;
+    task.doneAt = data.doneAt;
+
+    loading = false;
   }
 </script>
+
+{#if loading}
+  <Loading fullScreen={true} />
+{/if}
 
 <td>
   {#if task.doneAt}
@@ -32,51 +60,31 @@
       <i class="fas fa-external-link-alt">
     </a>
   {/if}
+  {#if task.description}
+    <button onclick={() => showDetails = !showDetails} aria-label="details">
+      <i class="fas fa-caret-{showDetails ? 'up' : 'down'}">
+    </button>
+  {/if}
+  <br />
+  {#if showDetails}
+    <p>{task.description ? task.description : "(No description)"}</p>
+  {/if}
 </td>
-{#each iterations as iteration}
-  <td class:today={iteration.plannedAt === today} 
-    class:done={iteration.done}
-    class:overdue={iteration.plannedAt < today && !iteration.done}>
-
-    {#if loading}
-      <Loading fullScreen={false} />
-    {:else}
-      {#if editing}
-        <form onsubmit={save}>
-          {#if iteration.done}
-            <label for="plannedAt">
+{#each iters as iter, i}
+  <td class:today={iter.plannedAt === today} 
+    class:done={iter.done}
+    class:overdue={iter.plannedAt < today && !iter.done}>
+      <div>
+        <span>{formatStrDateLocale(iter.plannedAt)}</span>
+        <span>
+          {#if iter.canToggle}
+            <button aria-label="check" class:done={iter.done} onclick={() => toggleDone(i)}>
               <i class="fas fa-check"></i>
-            </label>
-          {:else}
-            <label for="plannedAt">
-              <i class="fas fa-calendar-alt"></i>
-            </label>
+            </button>
           {/if}
-          <input name="plannedAt" type="date" bind:value={iteration.plannedAt} />
-
-          <button type="submit" aria-label="submit">
-            <i class="fas fa-save"></i>
-          </button>
-          <button type="button" onclick={() => editing=false} aria-label="cancel">
-            <i class="fas fa-times"></i>
-          </button>
-        </form>
-      {:else}
-        <div>
-          <span>{formatStrDateLocale(iteration.plannedAt)}</span>
-
-          <span>
-            <button aria-label="check" class:done={iteration.done} onclick={() => iteration.done = !iteration.done}>
-              <i class="fas fa-check"></i>
-            </button>
-            <button aria-label="edit" onclick={() => editing=true}>
-              <i class="fas fa-edit"></i>
-            </button>
-          </span>
-        </div>
-      {/if}
-    {/if}
-</td>
+        </span>
+      </div>
+  </td>
 {/each}
 
 <style>
@@ -89,14 +97,6 @@
   button.done {
     background-color: green !important;
     color: white;
-  }
-
-  .fa-save {
-    color: green;
-  }
-
-  .fa-times {
-    color: red;
   }
 
   .today {

@@ -4,7 +4,7 @@ import { pgTable, serial, text, integer, timestamp, json, date } from "drizzle-o
 const commonFields = {
   id: serial("id").primaryKey(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdate(() => new Date()),
 }
 
 export const user = pgTable("user", {
