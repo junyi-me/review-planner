@@ -10,3 +10,9 @@ export function setToastState(toast: ToastType) {
   toastState.message = toast.message;
 }
 
+export const loadingState = $state<{ loading: boolean }>({ loading: false });
+
+export function setLoadingState(loading: boolean) {
+  loadingState.loading = loading;
+}
+

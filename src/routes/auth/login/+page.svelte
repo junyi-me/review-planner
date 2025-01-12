@@ -1,10 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { setToastState } from "$lib/store/toast.svelte";
   import { user } from "$lib/store/user.client";
   import { onMount } from "svelte";
   import { REGIST_DONE_PARAM } from "../regist/util";
+  import { setToastState } from "$lib/store/global.svelte";
 
   const justRegistered = page.url.searchParams.has(REGIST_DONE_PARAM);
   onMount(() => {

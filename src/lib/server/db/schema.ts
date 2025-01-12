@@ -22,7 +22,7 @@ export const project = pgTable("project", {
   ...commonFields,
   ownerId: integer("owner_id").notNull(),
   name: text("name").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   offsetDays: json("offset_days").$type<number[]>().notNull(),
 });
 

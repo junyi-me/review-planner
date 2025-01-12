@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Dashboard from "./dashboard/Dashboard.svelte";
-  import type { PageData } from "./util";
+  import type { GetProjectResp } from "$lib/api";
+  import Dashboard from "./Dashboard.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data }: { data: GetProjectResp } = $props();
 </script>
 
 <h1>Dashboard</h1>

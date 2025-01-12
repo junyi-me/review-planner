@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import { project, task } from "$lib/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
 import { redirect } from "@sveltejs/kit";
@@ -17,7 +17,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     throw redirect(302, "/app");
   }
 
-  const tasks = await db.select().from(task).where(eq(task.projectId, projId)).limit(50);
+  const tasks = await db.select().from(task).where(eq(task.projectId, projId)).limit(50)
+    .orderBy(sql`${task.nextIterAt} ASC NULLS LAST`);
 
   return { project: projects[0], tasks } as PageProps;
 }

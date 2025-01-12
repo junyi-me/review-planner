@@ -2,6 +2,7 @@
   import { navigating } from "$app/state";
   import Loading from "$lib/component/Loading.svelte";
   import Toast from "$lib/component/Toast.svelte";
+  import { loadingState } from "$lib/store/global.svelte";
   import { loggedIn } from "$lib/store/user.client";
   import '@fortawesome/fontawesome-free/css/all.min.css'
 
@@ -14,7 +15,7 @@
 
 <Toast />
 
-{#if navigating.type}
+{#if navigating.type || loadingState.loading}
   <Loading fullScreen />
 {/if}
 

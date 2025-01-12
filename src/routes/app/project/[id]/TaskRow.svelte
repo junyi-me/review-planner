@@ -3,7 +3,7 @@
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
   import type { Iteration, TaskRow } from "$lib/server/db/schema";
-  import { setToastState } from "$lib/store/toast.svelte";
+  import { setToastState } from "$lib/store/global.svelte";
   import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
   import { convertIters } from "./util";
 
@@ -50,10 +50,7 @@
   <Loading fullScreen={true} />
 {/if}
 
-<td>
-  {#if task.doneAt}
-    <span>✅</span>
-  {/if}
+<td class:done={task.doneAt}>
   <a href="/app/task/{task.id}/">{task.name}</a>
   {#if task.link}
     <a href={task.link} target="_blank" aria-label="external">

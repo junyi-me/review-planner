@@ -28,7 +28,7 @@ export async function PUT({ params, locals, request }: RequestEvent) {
   }
   const dbTask = taskProjs[0].task;
 
-  const nextIterAt = pTask.iterations.find(iter => !iter.done)?.plannedAt;
+  const nextIterAt = pTask.iterations.find(iter => !iter.done)?.plannedAt ?? null;
   const doneAt = nextIterAt ? null : pTask.iterations[pTask.iterations.length - 1].plannedAt;
 
   await db.update(task).set({
@@ -40,6 +40,6 @@ export async function PUT({ params, locals, request }: RequestEvent) {
     doneAt,
   }).where(eq(task.id, dbTask.id));
 
-  return new Response(JSON.stringify({ doneAt } as PutTaskResp), { status: 200 });
+  return new Response(JSON.stringify({ doneAt, nextIterAt } as PutTaskResp), { status: 200 });
 }
 

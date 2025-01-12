@@ -2,11 +2,11 @@
   import type { PutTaskReq, PutTaskResp } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
-    import { MAX_ITERATIONS } from "$lib/const";
+  import { MAX_ITERATIONS } from "$lib/const";
   import type { TaskRow } from "$lib/server/db/schema";
-  import { setToastState } from "$lib/store/toast.svelte";
-  import { getCurrentDateInputFormat } from "$lib/util";
-    import { convertIters } from "../../project/[id]/util";
+  import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
+  import { getCurrentDateInputFormat, getLinkFromClipboard } from "$lib/util";
+  import { convertIters } from "../../project/[id]/util";
 
   let { task: initTask, onSave, onCancel }: {
     task: TaskRow, 
@@ -16,10 +16,14 @@
   let task = $state({ ...initTask });
   let iterations = $derived.by(() => convertIters(task.iterations));
 
-  let loading = $state(false);
+  let linkInput: HTMLInputElement;
+  async function handlePaste(e: ClipboardEvent) {
+    const url = await getLinkFromClipboard(e);
+    if (url) linkInput.value = url;
+  }
 
   async function save() {
-    loading = true;
+    setLoadingState(true);
 
     const body: PutTaskReq = { task };
     const resp = await obtain(`/app/task/${task.id}/`, {
@@ -30,7 +34,7 @@
     if (!resp.ok) {
       console.error("Failed to save", resp);
       setToastState({ type: "error", message: "Failed to save" });
-      // setTimeout(() => window.location.reload(), 500);
+      setTimeout(() => window.location.reload(), 500);
       return;
     }
 
@@ -38,18 +42,18 @@
     task.doneAt = data.doneAt;
     onSave(task);
 
-    loading = false;
+    setLoadingState(false);
   }
 </script>
 
-{#if loading}
+{#if loadingState.loading}
   <Loading fullScreen={true} />
 {/if}
 
 <div class="container">
-  <input class="title" type="text" value={task.name} oninput={e => task.name = (e.target as HTMLInputElement).value} />
+  <input class="title" type="text" value={task.name} onpaste={handlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
   <br />
-  <input type="text" value={task.link} oninput={e => task.link = (e.target as HTMLInputElement).value} />
+  <input type="text" value={task.link} bind:this={linkInput} oninput={e => task.link = (e.target as HTMLInputElement).value} />
   <br />
   <textarea value={task.description} oninput={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
 

@@ -5,7 +5,7 @@
   import Loading from "$lib/component/Loading.svelte";
   import { MAX_ITERATIONS } from "$lib/const";
   import type { ProjectRow } from "$lib/server/db/schema";
-  import { setToastState } from "$lib/store/toast.svelte";
+  import { setToastState } from "$lib/store/global.svelte";
   import { formatDateInput, formatDateLocale, getLinkFromClipboard } from "$lib/util";
 
   let { data }: { data: { project: ProjectRow } } = $props();

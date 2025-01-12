@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toastState } from "$lib/store/toast.svelte";
+  import { toastState } from "$lib/store/global.svelte";
   import { fade } from "svelte/transition";
   
   let cleanToast: NodeJS.Timeout;

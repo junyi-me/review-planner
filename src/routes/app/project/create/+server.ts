@@ -1,23 +1,19 @@
+import type { PutProjectReq } from "$lib/api";
 import { db } from "$lib/server/db";
 import { project } from "$lib/server/db/schema";
 import { getTokenPayload } from "$lib/server/util";
 import type { RequestEvent } from "./$types";
 
-type CreateReq = {
-  name: string;
-  description: string;
-  offsetDays: number[];
-}
-
 export async function POST({ locals, request }: RequestEvent) {
   const user = getTokenPayload(locals);
+  const body = await request.json() as PutProjectReq;
+  const pProj = body.project;
 
-  const body = await request.json() as CreateReq;
   const projs = await db.insert(project).values({
     ownerId: user.userId,
-    name: body.name,
-    description: body.description,
-    offsetDays: body.offsetDays,
+    name: pProj.name,
+    description: pProj.description,
+    offsetDays: pProj.offsetDays,
   }).returning({ id: project.id });
 
   if (projs.length !== 1) {

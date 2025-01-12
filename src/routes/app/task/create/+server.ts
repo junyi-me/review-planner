@@ -29,6 +29,7 @@ export async function POST({ locals, request }: RequestEvent) {
       plannedAt: formatStrDateInput(date),
       done: false,
     })) as Iteration[],
+    nextIterAt: formatStrDateInput(body.iterations[0]),
   }).returning({ id: task.id });
   if (newTasks.length !== 1) {
     console.error("Failed to create task");
