@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { obtain } from "$lib/api.client";
+  import EditTask from "$lib/component/project/EditTask.svelte";
   import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
-  import EditTask from "./EditTask.svelte";
+  import { setLoadingState } from "$lib/store/global.svelte";
 
   type PageProps = {
     project: ProjectRow;
@@ -11,6 +14,26 @@
   let { task } = data;
 
   let editing = $state(false);
+
+  async function deleteTask() {
+    if (!confirm("Are you sure you want to delete this task?")) {
+      return;
+    }
+
+    setLoadingState(true);
+    const resp = await obtain(undefined, {
+      method: "DELETE",
+    });
+
+    setLoadingState(false);
+    if (!resp.ok) {
+      console.error("Failed to delete", resp);
+      alert("Failed to delete");
+      return;
+    }
+
+    goto(`/app/project/${task.projectId}`);
+  }
 </script>
 
 {#if !editing}
@@ -48,6 +71,7 @@
 
   <br />
   <button onclick={() => editing = true}>Edit</button>
+  <button onclick={deleteTask}>Delete</button>
 {:else}
   <EditTask {task} onSave={() => location.reload()} onCancel={() => editing = false} />
 {/if}

@@ -6,6 +6,11 @@ import { project } from "$lib/server/db/schema";
 import { db } from "$lib/server/db";
 import { MAX_ITERATIONS } from "$lib/const";
 
+async function getProjectForUser(projId: number, userId: number) {
+  return await db.select().from(project)
+    .where(and(eq(project.id, projId), eq(project.ownerId, userId)));
+}
+
 export async function PUT({ params, locals, request }: RequestEvent) {
   const projId = parseInt(params.id);
   const user = getTokenPayload(locals);
@@ -22,8 +27,7 @@ export async function PUT({ params, locals, request }: RequestEvent) {
     }), { status: 400 });
   }
 
-  const projects = await db.select().from(project)
-    .where(and(eq(project.ownerId, user.userId), eq(project.id, projId)));
+  const projects = await getProjectForUser(projId, user.userId);
   if (projects.length !== 1) {
     console.error("Project not found", { projId, userId: user.userId });
     return new Response(null, { status: 404 });
@@ -36,5 +40,20 @@ export async function PUT({ params, locals, request }: RequestEvent) {
   }).where(eq(project.id, projId));
 
   return new Response(null, { status: 200 });
+}
+
+export async function DELETE({ params, locals }: RequestEvent) {
+  const projId = parseInt(params.id);
+  const user = getTokenPayload(locals);
+
+  const projects = await getProjectForUser(projId, user.userId);
+  if (projects.length !== 1) {
+    console.error("Task not found", { taskId: projId, userId: user.userId });
+    return new Response(null, { status: 404 });
+  }
+
+  await db.delete(project).where(eq(project.id, projId));
+
+  return new Response(null, { status: 204 });
 }
 

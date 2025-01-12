@@ -1,15 +1,20 @@
-import type { ProjectRow, TaskRow } from "./server/db/schema";
+import type { Iteration, ProjectRow } from "./server/db/schema";
 
-export type CreateTaskReq = {
+export type TaskPartial = {
+  id?: number;
   name: string;
   projectId: number;
-  iterations: string[];
   link?: string;
   description?: string;
+  iterations: Iteration[];
+}
+
+export type CreateTaskReq = {
+  task: TaskPartial;
 }
 
 export type PutTaskReq = {
-  task: TaskRow;
+  task: TaskPartial;
 }
 
 export type PutTaskResp = {
@@ -18,10 +23,10 @@ export type PutTaskResp = {
 }
 
 export type ProjectPartial = {
+  id?: number;
   name: string;
   description?: string | null;
   offsetDays: number[];
-  id?: number;
 }
 
 export type PutProjectReq = {

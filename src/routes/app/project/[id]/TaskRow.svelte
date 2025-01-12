@@ -2,10 +2,10 @@
   import type { PutTaskReq, PutTaskResp } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
+  import { convertIters } from "$lib/component/project/componentUtil";
   import type { Iteration, TaskRow } from "$lib/server/db/schema";
-  import { setToastState } from "$lib/store/global.svelte";
+  import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
-  import { convertIters } from "./util";
 
   let { task: taskProps }: { task: TaskRow } = $props();
   let task = $state(taskProps);
@@ -15,12 +15,11 @@
   let iters: IterCanbeDone[] = $derived.by(() => convertIters(iterations));
 
   let showDetails = $state(false);
-  let loading = $state(false);
 
   const today = getCurrentDateInputFormat();
 
   async function toggleDone(i: number) {
-    loading = true;
+    setLoadingState(true);
 
     const iter = iterations[i];
     iter.done = !iter.done;
@@ -42,11 +41,11 @@
     const data = await resp.json() as PutTaskResp;
     task.doneAt = data.doneAt;
 
-    loading = false;
+    setLoadingState(false);
   }
 </script>
 
-{#if loading}
+{#if loadingState.loading}
   <Loading fullScreen={true} />
 {/if}
 

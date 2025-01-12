@@ -1,33 +1,42 @@
 <script lang="ts">
-  import type { PutTaskReq, PutTaskResp } from "$lib/api";
+  import type { PutTaskReq, TaskPartial } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
   import { MAX_ITERATIONS } from "$lib/const";
-  import type { TaskRow } from "$lib/server/db/schema";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
-  import { getCurrentDateInputFormat, getLinkFromClipboard } from "$lib/util";
-  import { convertIters } from "../../project/[id]/util";
+  import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
+  import { convertIters } from "./componentUtil";
 
   let { task: initTask, onSave, onCancel }: {
-    task: TaskRow, 
-    onSave: (t: TaskRow) => void 
+    task: TaskPartial,
+    onSave: () => void 
     onCancel: () => void
   } = $props();
   let task = $state({ ...initTask });
   let iterations = $derived.by(() => convertIters(task.iterations));
+  let offsets = $derived.by(() => iterations.map(iter => getDateDiff(iterations[0].plannedAt, iter.plannedAt)));
 
-  let linkInput: HTMLInputElement;
-  async function handlePaste(e: ClipboardEvent) {
+  async function handleTitlePaste(e: ClipboardEvent) {
     const url = await getLinkFromClipboard(e);
-    if (url) linkInput.value = url;
+    if (url) task.link= url;
+  }
+
+  function addIteration() {
+    const plannedAt = addOffsetToDate(iterations[iterations.length - 1].plannedAt, offsets[offsets.length - 1] * 2);
+    task.iterations.push({ plannedAt, done: false });
+  }
+
+  function updateOffset(i: number, e: Event) {
+    const target = e.target as HTMLInputElement;
+    task.iterations[i].plannedAt = addOffsetToDate(iterations[0].plannedAt, parseInt(target.value));
   }
 
   async function save() {
     setLoadingState(true);
 
     const body: PutTaskReq = { task };
-    const resp = await obtain(`/app/task/${task.id}/`, {
-      method: "PUT",
+    const resp = await obtain(undefined, {
+      method: initTask.id ? "PUT" : "POST",
       body: JSON.stringify(body),
     });
 
@@ -38,10 +47,7 @@
       return;
     }
 
-    const data = await resp.json() as PutTaskResp;
-    task.doneAt = data.doneAt;
-    onSave(task);
-
+    onSave();
     setLoadingState(false);
   }
 </script>
@@ -51,9 +57,9 @@
 {/if}
 
 <div class="container">
-  <input class="title" type="text" value={task.name} onpaste={handlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
+  <input class="title" type="text" value={task.name} onpaste={handleTitlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
   <br />
-  <input type="text" value={task.link} bind:this={linkInput} oninput={e => task.link = (e.target as HTMLInputElement).value} />
+  <input type="text" bind:value={task.link} />
   <br />
   <textarea value={task.description} oninput={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
 
@@ -73,6 +79,14 @@
             <td>{i + 1}</td>
             <td>
               <input type="date" value={iter.plannedAt} onchange={e => task.iterations[i].plannedAt = (e.target as HTMLInputElement).value} />
+              &nbsp;
+              {#if i > 0}
+                <span>(+ 
+                  <input value={offsets[i]} type="number" min="0" max="365" 
+                    onfocusin={e => (e.target as HTMLInputElement).select()} 
+                    oninput={e => updateOffset(i, e)} />
+                days)</span>
+              {/if}
             </td>
             <td>
               <input type="checkbox" checked={iter.done} 
@@ -80,7 +94,7 @@
                 disabled={!iter.canToggle} />
             </td>
             <td>
-              <button onclick={() => task.iterations.splice(i, 1)} aria-label="delete">
+              <button onclick={() => task.iterations.splice(i, 1)} aria-label="delete" disabled={i === 0}>
                 <i class="fas fa-trash"></i>
               </button>
             </td>
@@ -89,7 +103,7 @@
         <tr>
           {#if iterations.length < MAX_ITERATIONS}
             <td colspan="99">
-              <button onclick={() => task.iterations.push({ plannedAt: getCurrentDateInputFormat(), done: false })} aria-label="add">Add iteration</button>
+              <button onclick={addIteration} aria-label="add">Add iteration</button>
             </td>
           {/if}
         </tr>
@@ -111,9 +125,13 @@
     font-weight: bold;
   }
 
-  input:not([type=date]), textarea, table {
+  input, textarea, table {
     margin-bottom: 1em;
     width: 100%;
+  }
+
+  table input {
+    width: auto;
   }
 
   textarea {
