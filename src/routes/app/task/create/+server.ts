@@ -11,7 +11,6 @@ export async function POST({ locals, request }: RequestEvent) {
   const user = getTokenPayload(locals);
   const body = await request.json() as CreateTaskReq;
   const pTask = body.task;
-  console.log("pTask", pTask);
 
   if (pTask.iterations.length > MAX_ITERATIONS) {
     return new Response(null, { status: 400 });
@@ -35,6 +34,6 @@ export async function POST({ locals, request }: RequestEvent) {
     return new Response(null, { status: 500 });
   }
 
-  return new Response(null, { status: 201 });
+  return new Response(JSON.stringify(newTasks[0]), { status: 201 });
 }
 
