@@ -2,8 +2,7 @@ import { project, task } from "$lib/server/db/schema";
 import { and, eq } from 'drizzle-orm';
 import type { RequestEvent } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
-import type { PutTaskReq, PutTaskResp } from "$lib/api";
-import { MAX_ITERATIONS } from "$lib/const";
+import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
 import { db } from "$lib/server/db";
 
 async function getTaskForUser(taskId: number, userId: number) {
@@ -17,11 +16,9 @@ export async function PUT({ params, locals, request }: RequestEvent) {
   const body = await request.json() as PutTaskReq;
   const pTask = body.task;
 
-  // validation
-  if (pTask.iterations.length > MAX_ITERATIONS) {
-    return new Response(JSON.stringify({
-      error: "Too many iterations",
-    }), { status: 400 });
+  const err = validateTask(pTask);
+  if (err) {
+    return new Response(JSON.stringify(err), { status: 400 });
   }
 
   const taskProjs = await getTaskForUser(taskId, user.userId);

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { PutTaskReq, TaskPartial } from "$lib/api";
+  import { validateTask, type PutTaskReq, type TaskPartial } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
   import { MAX_ITERATIONS } from "$lib/const";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
-  import { convertIters } from "./componentUtil";
+  import { convertIters, updateIterPlannedAt } from "./componentUtil";
 
   let { task: initTask, onSave, onCancel }: {
     task: TaskPartial,
@@ -26,12 +26,23 @@
     task.iterations.push({ plannedAt, done: false });
   }
 
+  function updatePlannedAt(i: number, e: Event) {
+    const target = e.target as HTMLInputElement;
+    task.iterations = updateIterPlannedAt(task.iterations, i, target.value);
+  }
+
   function updateOffset(i: number, e: Event) {
     const target = e.target as HTMLInputElement;
     task.iterations[i].plannedAt = addOffsetToDate(iterations[0].plannedAt, parseInt(target.value));
   }
 
   async function save() {
+    const err = validateTask(task);
+    if (err) {
+      alert(err);
+      return;
+    }
+
     setLoadingState(true);
 
     const body: PutTaskReq = { task };
@@ -61,7 +72,7 @@
   <br />
   <input type="text" bind:value={task.link} />
   <br />
-  <textarea value={task.description} oninput={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
+  <textarea value={task.description} onchange={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
 
   <div class="striped">
     <table>
@@ -78,11 +89,11 @@
           <tr>
             <td>{i + 1}</td>
             <td>
-              <input type="date" value={iter.plannedAt} onchange={e => task.iterations[i].plannedAt = (e.target as HTMLInputElement).value} />
+              <input type="date" value={iter.plannedAt} onchange={e => updatePlannedAt(i, e)} />
               &nbsp;
               {#if i > 0}
                 <span>(+ 
-                  <input value={offsets[i]} type="number" min="0" max="365" 
+                  <input value={offsets[i]} type="number" min="0" step="1"
                     onfocusin={e => (e.target as HTMLInputElement).select()} 
                     oninput={e => updateOffset(i, e)} />
                 days)</span>

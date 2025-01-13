@@ -10,10 +10,9 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (event.request.headers.get("accept")?.includes("application/json")) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
       }
-      return redirect(302, `/auth/refresh?${REDIRECT_TO_PARAM}=${encodeURIComponent(event.url.pathname)}`);
+      return redirect(302, `/auth/refresh?${REDIRECT_TO_PARAM}=${encodeURIComponent(event.url.toString())}`);
     }
 
-    token = event.cookies.get(COOKIE.ACCESS_TOKEN.key);
     const payload = verifyToken(token!);
 
     // @ts-ignore

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProjectPartial } from "$lib/api";
+  import { validateProject, type ProjectPartial } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
@@ -19,6 +19,12 @@
   }
 
   async function save() {
+    const err = validateProject(project);
+    if (err) {
+      alert(err);
+      return;
+    }
+
     setLoadingState(true);
 
     const resp = await obtain(undefined, {
@@ -61,9 +67,14 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>1</td>
+          <td>0</td>
+          <td></td>
+        </tr>
         {#each project.offsetDays as offsetDay, i}
           <tr>
-            <td>{i + 1}</td>
+            <td>{i + 2}</td>
             <td>
               <input type="number" name="offsetDays" value={offsetDay} 
                 onfocusin={e => (e.target as HTMLInputElement).select()} 
@@ -77,10 +88,10 @@
           </tr>
         {/each}
         <tr>
-          <td colspan={99}>
+          <td colspan="99">
             <button type="button" 
               onclick={() => project.offsetDays = [...project.offsetDays, project.offsetDays[project.offsetDays.length-1] * 2]}
-              disabled={project.offsetDays.length >= MAX_ITERATIONS}>
+              disabled={project.offsetDays.length >= MAX_ITERATIONS - 1}>
               Add iteration
             </button>
           </td>

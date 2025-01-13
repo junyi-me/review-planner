@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ProjectMinIter } from "$lib/api";
-  import { formatDateLocale, getCurrentDateInputFormat } from "$lib/util";
+  import { formatDateLocale, formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
 
   let { projects: projectTasks }: { projects: ProjectMinIter[] } = $props();
 
@@ -22,7 +22,7 @@
     <tbody>
       {#if projectTasks.length === 0}
         <tr>
-          <td colspan={99} class="nocontent">No projects</td>
+          <td colspan="99" class="nocontent">No projects</td>
         </tr>
       {/if}
       {#each projectTasks as pt, i}
@@ -33,7 +33,7 @@
           </td>
           <td>{pt.project.description}</td>
           <td class:today={today === pt.task?.min_next_iter_at} class:overdue={pt.task && today > pt.task.min_next_iter_at}>
-            {pt.task ? pt.task.min_next_iter_at : "(none)"}
+            {pt.task ? formatStrDateLocale(pt.task.min_next_iter_at) : "(none)"}
           </td>
           <td>{formatDateLocale(pt.project.createdAt)}</td>
         </tr>

@@ -1,10 +1,9 @@
 import type { RequestEvent } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
-import type { PutProjectReq } from "$lib/api";
+import { validateProject, type PutProjectReq } from "$lib/api";
 import { and, eq } from "drizzle-orm";
 import { project } from "$lib/server/db/schema";
 import { db } from "$lib/server/db";
-import { MAX_ITERATIONS } from "$lib/const";
 
 async function getProjectForUser(projId: number, userId: number) {
   return await db.select().from(project)
@@ -17,14 +16,9 @@ export async function PUT({ params, locals, request }: RequestEvent) {
   const body = await request.json() as PutProjectReq;
   const pProj = body.project;
 
-  // validation
-  if (Object.keys(pProj).length === 0) {
-    return new Response(null, { status: 400 });
-  }
-  if (pProj.offsetDays && pProj.offsetDays.length > MAX_ITERATIONS) {
-    return new Response(JSON.stringify({
-      error: "Too many iterations",
-    }), { status: 400 });
+  const err = validateProject(pProj);
+  if (err) {
+    return new Response(JSON.stringify(err), { status: 400 });
   }
 
   const projects = await getProjectForUser(projId, user.userId);

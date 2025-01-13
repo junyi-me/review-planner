@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { PutTaskReq, PutTaskResp } from "$lib/api";
+  import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
-  import { convertIters } from "$lib/component/project/componentUtil";
+  import { convertIters, updateIterPlannedAt } from "$lib/component/project/componentUtil";
   import type { Iteration, TaskRow } from "$lib/server/db/schema";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
@@ -19,12 +19,23 @@
   const today = getCurrentDateInputFormat();
 
   async function toggleDone(i: number) {
-    setLoadingState(true);
-
     const iter = iterations[i];
     iter.done = !iter.done;
-    if (iter.done) iter.plannedAt = getCurrentDateInputFormat();
+    if (iter.done) {
+      if (iter.plannedAt !== today && confirm("Task is not planned for today. Mark as done today and adjust the future iterations?")) {
+        task.iterations = updateIterPlannedAt(iterations, i, today);
+      } else if (confirm("Mark as done today?")) {
+        iter.plannedAt = today;
+      }
+    }
 
+    const err = validateTask(task);
+    if (err) {
+      alert(err);
+      return;
+    }
+
+    setLoadingState(true);
     const body: PutTaskReq = { task };
     const resp = await obtain(`/app/task/${task.id}/`, {
       method: "PUT",

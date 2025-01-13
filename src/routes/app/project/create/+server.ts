@@ -1,4 +1,4 @@
-import type { PutProjectReq } from "$lib/api";
+import { validateProject, type PutProjectReq } from "$lib/api";
 import { db } from "$lib/server/db";
 import { project } from "$lib/server/db/schema";
 import { getTokenPayload } from "$lib/server/util";
@@ -8,6 +8,11 @@ export async function POST({ locals, request }: RequestEvent) {
   const user = getTokenPayload(locals);
   const body = await request.json() as PutProjectReq;
   const pProj = body.project;
+
+  const err = validateProject(pProj);
+  if (err) {
+    return new Response(JSON.stringify(err), { status: 400 });
+  }
 
   const projs = await db.insert(project).values({
     ownerId: user.userId,

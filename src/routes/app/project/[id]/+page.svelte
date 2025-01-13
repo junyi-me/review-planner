@@ -12,7 +12,7 @@
   let editing = $state(false);
 
   async function deleteProject() {
-    if (!confirm("Are you sure you want to delete this task?")) {
+    if (!confirm("Are you sure you want to delete this project?")) {
       return;
     }
 
@@ -43,13 +43,13 @@
         <tr>
           <th>#</th>
           <th>Task</th>
-          <th colspan={99}>Iterations</th>
+          <th colspan="99">Iterations</th>
         </tr>
       </thead>
       <tbody>
         {#if tasks.length === 0}
           <tr>
-            <td colspan={99} class="nocontent">No tasks</td>
+            <td colspan="99" class="nocontent">No tasks</td>
           </tr>
         {/if}
         {#each tasks as task, i}
