@@ -21,8 +21,8 @@
   async function toggleDone(i: number) {
     const iter = iterations[i];
     iter.done = !iter.done;
-    if (iter.done) {
-      if (iter.plannedAt !== today && confirm("Task is not planned for today. Mark as done today and adjust the future iterations?")) {
+    if (iter.done && iter.plannedAt !== today) {
+      if (confirm("Task is not planned for today. Mark as done today and adjust the future iterations?")) {
         task.iterations = updateIterPlannedAt(iterations, i, today);
       } else if (confirm("Mark as done today?")) {
         iter.plannedAt = today;

@@ -1,23 +1,25 @@
 import { db } from "$lib/server/db";
 import { project, task } from "$lib/server/db/schema";
-import type { TokenPayload } from "$lib/server/jwt";
 import { eq, sql } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
+import { getTokenPayload } from "$lib/server/util";
+import { getProjectPaging, MIN_NEXT_ITER_AT } from "./util";
 import type { GetProjectResp } from "$lib/api";
 
-export const load: PageServerLoad = async ({ locals }) => {
-  // @ts-ignore
-  const user = locals.user as TokenPayload;
+export const load: PageServerLoad = async ({ url, locals }) => {
+  const user = getTokenPayload(locals);
+  const opts = getProjectPaging(url.searchParams);
 
   const sq = db.select({
     projectId: task.projectId,
-    min_next_iter_at: sql<Date>`min(${task.nextIterAt})`.as('min_next_iter_at'),
+    min_next_iter_at: sql<Date>`min(${task.nextIterAt})`.as(MIN_NEXT_ITER_AT),
   }).from(task).groupBy(task.projectId).as('task');
 
   const projects = await db.select().from(project)
     .fullJoin(sq, eq(project.id, sq.projectId))
     .where(eq(project.ownerId, user.userId))
-    .orderBy(sql`${sq.min_next_iter_at} NULLS LAST`);
+    .orderBy(sql`${opts.sortBy} ${opts.getDesc()} NULLS LAST`)
+    .limit(opts.pageSize).offset(opts.getOffset());
 
   return { projects } as GetProjectResp;
 }

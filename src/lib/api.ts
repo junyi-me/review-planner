@@ -1,4 +1,5 @@
-import { MAX_ITERATIONS } from "./const";
+import { SQL, sql } from "drizzle-orm";
+import { DEFAULT_PAGE_SIZE, MAX_ITERATIONS } from "./const";
 import type { Iteration, ProjectRow } from "./server/db/schema";
 
 export type TaskPartial = {
@@ -89,5 +90,41 @@ export function validateTask(task: TaskPartial) {
   }
 
   return null;
+}
+
+// common URL search param keys for different pages
+export const URL_PARAM_KEY = Object.freeze({
+  PAGE: 'page',
+  PAGE_SIZE: 'pageSize',
+  SORT_BY: 'sortBy',
+  DESC: 'desc',
+  SEARCH: 'search',
+});
+
+export type PageOpts = {
+  page: number;
+  pageSize: number;
+  desc: boolean;
+  sortBy: string | null;
+  search: string | null;
+  getOffset: () => number;
+  getDesc: () => SQL;
+}
+
+export function getPaging(params: URLSearchParams): PageOpts {
+  return {
+    page: parseInt(params.get(URL_PARAM_KEY.PAGE) ?? '1'),
+    pageSize: parseInt(params.get(URL_PARAM_KEY.PAGE_SIZE) ?? DEFAULT_PAGE_SIZE.toString()),
+    desc: params.get(URL_PARAM_KEY.DESC) === 'true',
+    sortBy: params.get(URL_PARAM_KEY.SORT_BY),
+    search: params.get(URL_PARAM_KEY.SEARCH),
+
+    getOffset() {
+      return (this.page - 1) * this.pageSize;
+    },
+    getDesc() {
+      return sql.raw(this.desc ? "DESC" : "ASC");
+    }
+  };
 }
 

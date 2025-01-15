@@ -20,7 +20,7 @@ export const userRelation = relations(user, ({ many }) => ({
 
 export const project = pgTable("project", {
   ...commonFields,
-  ownerId: integer("owner_id").notNull(),
+  ownerId: integer("owner_id").notNull().references(() => user.id),
   name: text("name").notNull(),
   description: text("description"),
   offsetDays: json("offset_days").$type<number[]>().notNull(),
@@ -41,7 +41,7 @@ export type Iteration = {
 export const task = pgTable("task", {
   ...commonFields,
   name: text("name").notNull(),
-  projectId: integer("project_id").notNull(),
+  projectId: integer("project_id").notNull().references(() => project.id),
   link: text("link"),
   description: text("description"),
   nextIterAt: date("next_iter_at"),
