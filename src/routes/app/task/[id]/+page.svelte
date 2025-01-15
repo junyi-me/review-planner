@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { obtain } from "$lib/api.client";
   import EditTask from "$lib/component/project/EditTask.svelte";
+  import { Table, Td, Th, Tr } from "$lib/component/table";
   import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
   import { setLoadingState } from "$lib/store/global.svelte";
 
@@ -49,24 +50,24 @@
 
   <h2>Iterations</h2>
   <div class="striped">
-    <table>
+    <Table>
       <thead>
-        <tr>
-          <th>#</th>
-          <th>Planned</th>
-          <th>Done</th>
-        </tr>
+        <Tr>
+          <Th>#</Th>
+          <Th>Planned</Th>
+          <Th>Done</Th>
+        </Tr>
       </thead>
       <tbody>
         {#each task.iterations as iter, i}
-          <tr>
-            <td>{i+1}</td>
-            <td>{iter.plannedAt}</td>
-            <td>{iter.done ? "✅" : "❌"}</td>
-          </tr>
+          <Tr>
+            <Td>{i+1}</Td>
+            <Td>{iter.plannedAt}</Td>
+            <Td>{iter.done ? "✅" : "❌"}</Td>
+          </Tr>
         {/each}
       </tbody>
-    </table>
+    </Table>
   </div>
 
   <br />

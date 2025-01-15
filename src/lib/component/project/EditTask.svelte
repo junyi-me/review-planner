@@ -5,6 +5,7 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
+  import { Table, Td, Th, Tr } from "../table";
   import { convertIters, updateIterPlannedAt } from "./componentUtil";
 
   let { task: initTask, onSave, onCancel }: {
@@ -68,27 +69,29 @@
 {/if}
 
 <div class="container">
-  <input class="title" type="text" value={task.name} onpaste={handleTitlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
-  <br />
-  <input type="text" bind:value={task.link} />
-  <br />
-  <textarea value={task.description} onchange={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
+  <div class="inputs">
+    <input class="title" type="text" value={task.name} onpaste={handleTitlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
+    <br />
+    <input type="text" bind:value={task.link} />
+    <br />
+    <textarea value={task.description} onchange={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
+  </div>
 
   <div class="striped">
-    <table>
+    <Table>
       <thead>
-        <tr>
-          <th>Iteration</th>
-          <th>Planned at</th>
-          <th>Done</th>
-          <th>Actions</th>
-        </tr>
+        <Tr>
+          <Th>Iteration</Th>
+          <Th>Planned at</Th>
+          <Th>Done</Th>
+          <Th>Actions</Th>
+        </Tr>
       </thead>
       <tbody>
         {#each iterations as iter, i}
-          <tr>
-            <td>{i + 1}</td>
-            <td>
+          <Tr>
+            <Td>{i + 1}</Td>
+            <Td>
               <input type="date" value={iter.plannedAt} onchange={e => updatePlannedAt(i, e)} />
               &nbsp;
               {#if i > 0}
@@ -98,28 +101,28 @@
                     oninput={e => updateOffset(i, e)} />
                 days)</span>
               {/if}
-            </td>
-            <td>
+            </Td>
+            <Td>
               <input type="checkbox" checked={iter.done} 
                 onchange={(e) => task.iterations[i].done = (e.target as HTMLInputElement).checked} 
                 disabled={!iter.canToggle} />
-            </td>
-            <td>
+            </Td>
+            <Td>
               <button onclick={() => task.iterations.splice(i, 1)} aria-label="delete" disabled={i === 0}>
                 <i class="fas fa-trash"></i>
               </button>
-            </td>
-          </tr>
+            </Td>
+          </Tr>
         {/each}
         <tr>
           {#if iterations.length < MAX_ITERATIONS}
-            <td colspan="99">
+            <Td colspan={99}>
               <button onclick={addIteration} aria-label="add">Add iteration</button>
-            </td>
+            </Td>
           {/if}
         </tr>
       </tbody>
-    </table>
+    </Table>
   </div>
 
   <button onclick={save} aria-label="save">Save</button>
@@ -136,13 +139,9 @@
     font-weight: bold;
   }
 
-  input, textarea, table {
+  .inputs input, textarea {
     margin-bottom: 1em;
     width: 100%;
-  }
-
-  table input {
-    width: auto;
   }
 
   textarea {

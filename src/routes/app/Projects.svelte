@@ -1,45 +1,45 @@
 <script lang="ts">
   import type { ProjectMinIter } from "$lib/api";
-  import { formatDateLocale, formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
+  import { Td, Th, Tr } from "$lib/component/table";
+  import Table from "$lib/component/table/table.svelte";
+  import { formatDateLocale, formatStrDateLocale, getDateStatus } from "$lib/util";
 
   let { projects: projectTasks }: { projects: ProjectMinIter[] } = $props();
-
-  const today = getCurrentDateInputFormat();
 </script>
 
 <h2>Projects</h2>
 <div class="striped">
-  <table>
+  <Table>
     <thead>
       <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Next iteration</th>
-        <th>Created</th>
+        <Th>#</Th>
+        <Th>Name</Th>
+        <Th>Description</Th>
+        <Th>Next iteration</Th>
+        <Th>Created</Th>
       </tr>
     </thead>
     <tbody>
       {#if projectTasks.length === 0}
-        <tr>
-          <td colspan="99" class="nocontent">No projects</td>
-        </tr>
+        <Tr>
+          <Td colspan={99} class="nocontent">No projects</Td>
+        </Tr>
       {/if}
       {#each projectTasks as pt, i}
-        <tr>
-          <td>{i + 1}</td>
-          <td>
+        <Tr>
+          <Td>{i + 1}</Td>
+          <Td>
             <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
-          </td>
-          <td>{pt.project.description}</td>
-          <td class:today={today === pt.task?.min_next_iter_at} class:overdue={pt.task && today > pt.task.min_next_iter_at}>
+          </Td>
+          <Td>{pt.project.description}</Td>
+          <Td status={pt.task?.min_next_iter_at ? getDateStatus(pt.task.min_next_iter_at) : "success"}>
             {pt.task ? formatStrDateLocale(pt.task.min_next_iter_at) : "(none)"}
-          </td>
-          <td>{formatDateLocale(pt.project.createdAt)}</td>
-        </tr>
+          </Td>
+          <Td>{formatDateLocale(pt.project.createdAt)}</Td>
+        </Tr>
       {/each}
     </tbody>
-  </table>
+  </Table>
 </div>
 <br />
 

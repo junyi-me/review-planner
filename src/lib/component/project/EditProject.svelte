@@ -3,6 +3,7 @@
   import { obtain } from "$lib/api.client";
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
+  import { Table, Td, Th, Tr } from "../table";
 
   let { project: initProj, onSave, onCancel }: {
     project: ProjectPartial;
@@ -50,42 +51,44 @@
 </script>
 
 <div class="container">
-  <input class="title" type="text" value={project.name} oninput={e => project.name = (e.target as HTMLInputElement).value} />
-  <br />
-  <textarea value={project.description} oninput={e => project.description = (e.target as HTMLTextAreaElement).value}></textarea>
+  <div class="inputs">
+    <input class="title" type="text" value={project.name} oninput={e => project.name = (e.target as HTMLInputElement).value} />
+    <br />
+    <textarea value={project.description} oninput={e => project.description = (e.target as HTMLTextAreaElement).value}></textarea>
+  </div>
 
   <h2>Iterations</h2>
   <p>Default offset days for new tasks.</p>
 
   <div class="striped">
-    <table>
+    <Table>
       <thead>
-        <tr>
-          <th>Iteration</th>
-          <th>+days</th>
-          <th>Actions</th>
-        </tr>
+        <Tr>
+          <Th>Iteration</Th>
+          <Th>+days</Th>
+          <Th>Actions</Th>
+        </Tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>0</td>
-          <td></td>
-        </tr>
+        <Tr>
+          <Td>1</Td>
+          <Td>0</Td>
+          <Td></Td>
+        </Tr>
         {#each project.offsetDays as offsetDay, i}
-          <tr>
-            <td>{i + 2}</td>
-            <td>
+          <Tr>
+            <Td>{i + 2}</Td>
+            <Td>
               <input type="number" name="offsetDays" value={offsetDay} 
                 onfocusin={e => (e.target as HTMLInputElement).select()} 
                 onchange={e => handleOffsetDayChange(i, e)} />
-            </td>
-            <td>
+            </Td>
+            <Td>
               <button type="button" onclick={() => project.offsetDays = project.offsetDays.filter((_, j) => j !== i)} aria-label="delete">
                 <i class="fas fa-trash"></i>
               </button>
-            </td>
-          </tr>
+            </Td>
+          </Tr>
         {/each}
         <tr>
           <td colspan="99">
@@ -97,7 +100,7 @@
           </td>
         </tr>
       </tbody>
-    </table>
+    </Table>
   </div>
   <br />
 
@@ -115,14 +118,9 @@
     font-weight: bold;
   }
 
-  input, textarea {
+  .inputs input, textarea {
     margin-bottom: 1em;
     width: 100%;
-  }
-
-  table input {
-    margin: 0;
-    width: 4em;
   }
 
   textarea {

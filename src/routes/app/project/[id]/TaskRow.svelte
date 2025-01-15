@@ -3,9 +3,10 @@
   import { obtain } from "$lib/api.client";
   import Loading from "$lib/component/Loading.svelte";
   import { convertIters, updateIterPlannedAt } from "$lib/component/project/componentUtil";
+  import { Td } from "$lib/component/table";
   import type { Iteration, TaskRow } from "$lib/server/db/schema";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
-  import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
+  import { formatStrDateLocale, getCurrentDateInputFormat, getDateStatus } from "$lib/util";
 
   let { task: taskProps }: { task: TaskRow } = $props();
   let task = $state(taskProps);
@@ -60,7 +61,7 @@
   <Loading fullScreen={true} />
 {/if}
 
-<td class:done={task.doneAt}>
+<Td status={task.doneAt ? "success" : "normal"}>
   <a href="/app/task/{task.id}/">{task.name}</a>
   {#if task.link}
     <a href={task.link} target="_blank" aria-label="external">
@@ -76,22 +77,20 @@
   {#if showDetails}
     <p>{task.description ? task.description : "(No description)"}</p>
   {/if}
-</td>
+</Td>
 {#each iters as iter, i}
-  <td class:today={iter.plannedAt === today} 
-    class:done={iter.done}
-    class:overdue={iter.plannedAt < today && !iter.done}>
-      <div>
-        <span>{formatStrDateLocale(iter.plannedAt)}</span>
-        <span>
-          {#if iter.canToggle}
-            <button aria-label="check" class:done={iter.done} onclick={() => toggleDone(i)}>
-              <i class="fas fa-check"></i>
-            </button>
-          {/if}
-        </span>
-      </div>
-  </td>
+  <Td status={iter.done ? "success" : getDateStatus(iter.plannedAt)}>
+    <div>
+      <span>{formatStrDateLocale(iter.plannedAt)}</span>
+      <span>
+        {#if iter.canToggle}
+          <button aria-label="check" class:done={iter.done} onclick={() => toggleDone(i)}>
+            <i class="fas fa-check"></i>
+          </button>
+        {/if}
+      </span>
+    </div>
+  </Td>
 {/each}
 
 <style>

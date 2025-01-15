@@ -85,3 +85,14 @@ export function addOffsetToDate(date: string, offset: number): string {
   return formatDateInput(newDate);
 }
 
+export type TdStatus = "normal" | "warning" | "danger" | "success";
+export function getDateStatus(date: string): TdStatus {
+  const diff = getDateDiff(getCurrentDateInputFormat(), date);
+  if (diff < 0) {
+    return "danger";
+  } else if (diff === 0) {
+    return "warning";
+  }
+  return "normal";
+}
+

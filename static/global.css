@@ -3,38 +3,3 @@ body {
     padding: 0;
 }
 
-.striped table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.striped th, .striped td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.striped th {
-    background-color: #f2f2f2;
-}
-
-.striped tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.striped td.nocontent {
-    color: #999;
-    text-align: center;
-}
-
-.today {
-    background-color: #ffff99;
-}
-
-.overdue {
-    background-color: #ff9999;
-}
-
-.done {
-    background-color: #ccff99;
-}
-

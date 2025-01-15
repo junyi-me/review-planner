@@ -2,7 +2,7 @@ import type { RequestEvent } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
 import { validateProject, type PutProjectReq } from "$lib/api";
 import { and, eq } from "drizzle-orm";
-import { project } from "$lib/server/db/schema";
+import { project, task } from "$lib/server/db/schema";
 import { db } from "$lib/server/db";
 
 async function getProjectForUser(projId: number, userId: number) {
@@ -46,7 +46,10 @@ export async function DELETE({ params, locals }: RequestEvent) {
     return new Response(null, { status: 404 });
   }
 
-  await db.delete(project).where(eq(project.id, projId));
+  db.transaction(async (tx) => {
+    await tx.delete(task).where(eq(task.projectId, projId));
+    await tx.delete(project).where(eq(project.id, projId));
+  });
 
   return new Response(null, { status: 204 });
 }

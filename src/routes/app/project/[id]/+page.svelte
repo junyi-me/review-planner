@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { obtain } from '$lib/api.client';
   import EditProject from '$lib/component/project/EditProject.svelte';
+  import { Table, Td, Th, Tr } from '$lib/component/table';
   import { setLoadingState } from '$lib/store/global.svelte';
   import TaskRow from './TaskRow.svelte';
   import type { PageProps } from './util';
@@ -38,28 +39,28 @@
 
   <h2>Tasks</h2>
   <div class="striped">
-    <table>
+    <Table>
       <thead>
-        <tr>
-          <th>#</th>
-          <th>Task</th>
-          <th colspan="99">Iterations</th>
-        </tr>
+        <Tr>
+          <Th>#</Th>
+          <Th>Task</Th>
+          <Th colspan={99}>Iterations</Th>
+        </Tr>
       </thead>
       <tbody>
         {#if tasks.length === 0}
-          <tr>
-            <td colspan="99" class="nocontent">No tasks</td>
-          </tr>
+          <Tr>
+            <Td colspan={99} class="nocontent">No tasks</Td>
+          </Tr>
         {/if}
         {#each tasks as task, i}
-          <tr>
-            <td>{i+1}</td>
+          <Tr>
+            <Td>{i+1}</Td>
             <TaskRow {task} />
-          </tr>
+          </Tr>
         {/each}
       </tbody>
-    </table>
+    </Table>
   </div>
   <br />
 
