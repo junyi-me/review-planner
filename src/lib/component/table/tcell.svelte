@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { TdStatus } from "$lib/util";
   import type { HTMLTdAttributes } from "svelte/elements";
+  import type { TdStatus } from ".";
 
   let { children, status, ...restProps }: {
     children?: any;

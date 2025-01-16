@@ -1,17 +1,36 @@
 <script lang="ts">
-	import type { HTMLThAttributes } from "svelte/elements";
+	import type { HTMLAttributes } from "svelte/elements";
+  import { Th } from ".";
 
-  let { children, ...restProps }: {
-    children: any;
-  } & HTMLThAttributes = $props();
+  type TableCol = {
+    key: string;
+    label: string;
+    sortable?: boolean;
+  }
+
+  let { columns, onSort, ...restProps }: {
+    columns: TableCol[];
+    onSort?: (key: string, desc: boolean) => void;
+  } & HTMLAttributes<HTMLTableSectionElement> = $props();
+  
+  let activeSortKey = $state<string | null>(null);
+
+  function handleSortClick(key: string, desc: boolean) {
+    activeSortKey = key;
+    onSort?.(key, desc);
+  }
 </script>
 
-<th {...restProps}>
-  {@render children()}
-</th>
+<thead {...restProps}>
+  {#each columns as { key, label, sortable }}
+    <Th sortable={sortable} onSort={(desc) => handleSortClick(key, desc)} sorting={key === activeSortKey}>
+      {label}
+    </Th>
+  {/each}
+</thead>
 
 <style>
-  th {
+  thead {
     border: 1px solid #ddd;
     padding: 8px;
     background-color: #f2f2f2;

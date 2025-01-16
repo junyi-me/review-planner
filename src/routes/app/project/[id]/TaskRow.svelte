@@ -1,13 +1,13 @@
 <script lang="ts">
   import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
   import { obtain } from "$lib/api.client";
-    import DateCell from "$lib/component/DateCell.svelte";
+  import DateCell from "$lib/component/DateCell.svelte";
   import Loading from "$lib/component/Loading.svelte";
   import { convertIters, updateIterPlannedAt } from "$lib/component/project/componentUtil";
   import { Td } from "$lib/component/table";
   import type { Iteration, TaskRow } from "$lib/server/db/schema";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
-  import { formatStrDateLocale, getCurrentDateInputFormat, getDateStatus } from "$lib/util";
+  import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
 
   let { task: taskProps }: { task: TaskRow } = $props();
   let task = $state(taskProps);
@@ -18,9 +18,8 @@
 
   let showDetails = $state(false);
 
-  const today = getCurrentDateInputFormat();
-
   async function toggleDone(i: number) {
+    const today = getCurrentDateInputFormat();
     const iter = iterations[i];
     iter.done = !iter.done;
     if (iter.done && iter.plannedAt !== today) {

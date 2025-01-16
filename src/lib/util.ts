@@ -1,3 +1,5 @@
+import type { TdStatus } from "./component/table";
+
 export const DEFAULT_OFFSETS = [ 1, 3, 6 ];
 
 export function formatDateLocale(date: Date): string {
@@ -27,8 +29,8 @@ export function getCurrentDateInputFormat(): string {
 }
 
 /**
-  * Parse a date string (yyyy-mm-dd) to a Date object, which becomes the exact date in string, 00:00:00 in local time zone
-  * @param date - The date string to parse
+  * Parse a date string to a Date object, which becomes the exact date in string, 00:00:00 in local time zone
+  * @param date - The date string to parse (yyyy-mm-dd)
   * @returns The Date object
   */
 function strToDate(date: string): Date {
@@ -37,6 +39,11 @@ function strToDate(date: string): Date {
   return dateObj;
 }
 
+/**
+  * Format a date string to be displayed in the locale
+  * @param dstr - The date string to format (yyyy-mm-dd)
+  * @returns The formatted date
+  */
 export function formatStrDateLocale(dstr: string): string {
   return formatDateLocale(strToDate(dstr));
 }
@@ -92,7 +99,11 @@ export function addOffsetToDate(date: string, offset: number): string {
   return formatDateInput(newDate);
 }
 
-export type TdStatus = "normal" | "warning" | "danger" | "success";
+/**
+  * Get corresponding status for a date, to be rendered in a table cell
+  * @param date - yyyy-mm-dd
+  * @returns The status
+  */
 export function getDateStatus(date: string): TdStatus {
   const diff = getDateDiff(getCurrentDateInputFormat(), date);
   if (diff < 0) {

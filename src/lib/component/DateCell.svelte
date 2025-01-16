@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { HTMLTdAttributes } from "svelte/elements";
   import { Td } from "./table";
-  import { getDateStatus } from "$lib/util";
+  import { formatStrDateLocale, getDateStatus } from "$lib/util";
 
   let { date, done, children, ...restProps }: {
     date?: string;
@@ -17,7 +17,7 @@
     {#if children}
       {@render children()}
     {:else}
-      {date}
+      {formatStrDateLocale(date)}
     {/if}
   </Td>
 {/if}
