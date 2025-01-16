@@ -1,6 +1,7 @@
 <script lang="ts">
   import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
   import { obtain } from "$lib/api.client";
+    import DateCell from "$lib/component/DateCell.svelte";
   import Loading from "$lib/component/Loading.svelte";
   import { convertIters, updateIterPlannedAt } from "$lib/component/project/componentUtil";
   import { Td } from "$lib/component/table";
@@ -79,7 +80,7 @@
   {/if}
 </Td>
 {#each iters as iter, i}
-  <Td status={iter.done ? "success" : getDateStatus(iter.plannedAt)}>
+  <DateCell date={iter.plannedAt} done={iter.done}>
     <div>
       <span>{formatStrDateLocale(iter.plannedAt)}</span>
       <span>
@@ -90,7 +91,7 @@
         {/if}
       </span>
     </div>
-  </Td>
+  </DateCell>
 {/each}
 
 <style>
@@ -103,18 +104,6 @@
   button.done {
     background-color: green !important;
     color: white;
-  }
-
-  .today {
-    background-color: #ffff99;
-  }
-
-  .overdue {
-    background-color: #ff9999;
-  }
-
-  .done {
-    background-color: #ccff99;
   }
 </style>
 

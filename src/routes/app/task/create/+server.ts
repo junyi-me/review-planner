@@ -3,7 +3,6 @@ import { project, task } from "$lib/server/db/schema";
 import { and, eq } from 'drizzle-orm';
 import type { RequestEvent } from "@sveltejs/kit";
 import { getTokenPayload } from "$lib/server/util";
-import { formatStrDateInput } from "$lib/util";
 import { validateTask, type CreateTaskReq } from "$lib/api";
 
 export async function POST({ locals, request }: RequestEvent) {
@@ -27,7 +26,7 @@ export async function POST({ locals, request }: RequestEvent) {
     description: pTask.description,
     link: pTask.link,
     iterations: pTask.iterations,
-    nextIterAt: formatStrDateInput(pTask.iterations[0].plannedAt),
+    nextIterAt: pTask.iterations[0].plannedAt,
   }).returning({ id: task.id });
   if (newTasks.length !== 1) {
     console.error("Failed to create task");

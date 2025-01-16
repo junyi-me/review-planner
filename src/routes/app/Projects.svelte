@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { ProjectMinIter } from "$lib/api";
+  import DateCell from "$lib/component/DateCell.svelte";
   import { Td, Th, Tr } from "$lib/component/table";
   import Table from "$lib/component/table/table.svelte";
-  import { formatDateLocale, formatStrDateLocale, getDateStatus } from "$lib/util";
+  import { formatDateLocale } from "$lib/util";
 
   let { projects: projectTasks }: { projects: ProjectMinIter[] } = $props();
 </script>
@@ -32,9 +33,7 @@
             <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
           </Td>
           <Td>{pt.project.description}</Td>
-          <Td status={pt.task?.min_next_iter_at ? getDateStatus(pt.task.min_next_iter_at) : "success"}>
-            {pt.task ? formatStrDateLocale(pt.task.min_next_iter_at) : "(none)"}
-          </Td>
+          <DateCell date={pt.task?.min_next_iter_at} done={false} />
           <Td>{formatDateLocale(pt.project.createdAt)}</Td>
         </Tr>
       {/each}

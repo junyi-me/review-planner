@@ -26,12 +26,19 @@ export function getCurrentDateInputFormat(): string {
   return formatDateInput(new Date());
 }
 
-export function formatStrDateLocale(dstr: string): string {
-  return formatDateLocale(new Date(dstr));
+/**
+  * Parse a date string (yyyy-mm-dd) to a Date object, which becomes the exact date in string, 00:00:00 in local time zone
+  * @param date - The date string to parse
+  * @returns The Date object
+  */
+function strToDate(date: string): Date {
+  const [year, month, day] = date.split('-').map(Number);
+  const dateObj = new Date(year, month - 1, day);
+  return dateObj;
 }
 
-export function formatStrDateInput(dstr: string): string {
-  return formatDateInput(new Date(dstr));
+export function formatStrDateLocale(dstr: string): string {
+  return formatDateLocale(strToDate(dstr));
 }
 
 export async function getLinkFromClipboard(e: ClipboardEvent) {
@@ -80,7 +87,7 @@ export function getDateDiff(date1: string, date2: string) {
   * @returns The new date formatted by {@link formatDateInput}
   */
 export function addOffsetToDate(date: string, offset: number): string {
-  const newDate = new Date(date);
+  const newDate = strToDate(date);
   newDate.setDate(newDate.getDate() + offset);
   return formatDateInput(newDate);
 }
