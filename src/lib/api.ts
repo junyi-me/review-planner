@@ -1,4 +1,4 @@
-import { SQL, sql } from "drizzle-orm";
+import { asc, desc, SQL, type AnyColumn, type SQLWrapper } from "drizzle-orm";
 import { DEFAULT_PAGE_SIZE, MAX_ITERATIONS } from "./const";
 import type { Iteration, ProjectRow } from "./server/db/schema";
 
@@ -107,11 +107,14 @@ export type PageOpts = {
   desc: boolean;
   sortBy: string | null;
   search: string | null;
-  getOffset: () => number;
-  getDesc: () => SQL;
 }
 
-export function getPaging(params: URLSearchParams): PageOpts {
+export type PageOptsSql = PageOpts & {
+  getOffset: () => number;
+  getOrderFn: () => (column: AnyColumn | SQLWrapper) => SQL;
+}
+
+export function getPaging(params: URLSearchParams): PageOptsSql {
   return {
     page: parseInt(params.get(URL_PARAM_KEY.PAGE) ?? '1'),
     pageSize: parseInt(params.get(URL_PARAM_KEY.PAGE_SIZE) ?? DEFAULT_PAGE_SIZE.toString()),
@@ -122,9 +125,25 @@ export function getPaging(params: URLSearchParams): PageOpts {
     getOffset() {
       return (this.page - 1) * this.pageSize;
     },
-    getDesc() {
-      return sql.raw(this.desc ? "DESC" : "ASC");
+    getOrderFn() {
+      return this.desc ? desc : asc;
     }
   };
+}
+
+export function getPgParams(pg: PageOpts): URLSearchParams {
+  const params = new URLSearchParams();
+  params.set(URL_PARAM_KEY.PAGE, pg.page.toString());
+  params.set(URL_PARAM_KEY.PAGE_SIZE, pg.pageSize.toString());
+  if (pg.sortBy) {
+    params.set(URL_PARAM_KEY.SORT_BY, pg.sortBy);
+  }
+  if (pg.desc) {
+    params.set(URL_PARAM_KEY.DESC, 'true');
+  }
+  if (pg.search) {
+    params.set(URL_PARAM_KEY.SEARCH, pg.search);
+  }
+  return params;
 }
 

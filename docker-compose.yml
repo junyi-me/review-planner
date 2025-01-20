@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: local
     volumes:
-      - db_data:/data/postgres
+      - db_data:/var/lib/postgresql/data
 
 volumes:
   db_data:

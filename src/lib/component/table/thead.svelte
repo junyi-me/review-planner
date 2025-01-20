@@ -6,6 +6,8 @@
     key: string;
     label: string;
     sortable?: boolean;
+    colspan?: number;
+    sorting?: boolean;
   }
 
   let { columns, onSort, ...restProps }: {
@@ -13,7 +15,7 @@
     onSort?: (key: string, desc: boolean) => void;
   } & HTMLAttributes<HTMLTableSectionElement> = $props();
   
-  let activeSortKey = $state<string | null>(null);
+  let activeSortKey = $state<string | null>(columns.find(c => c.sorting)?.key ?? null);
 
   function handleSortClick(key: string, desc: boolean) {
     activeSortKey = key;
@@ -22,11 +24,13 @@
 </script>
 
 <thead {...restProps}>
-  {#each columns as { key, label, sortable }}
-    <Th sortable={sortable} onSort={(desc) => handleSortClick(key, desc)} sorting={key === activeSortKey}>
-      {label}
-    </Th>
-  {/each}
+  <tr>
+    {#each columns as { key, label, sortable, colspan }}
+      <Th sortable={sortable} onSort={(desc) => handleSortClick(key, desc)} sorting={key === activeSortKey} colspan={colspan}>
+        {label}
+      </Th>
+    {/each}
+  </tr>
 </thead>
 
 <style>

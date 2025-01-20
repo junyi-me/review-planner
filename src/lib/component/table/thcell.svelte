@@ -1,14 +1,16 @@
 <script lang="ts">
 	import type { HTMLThAttributes } from "svelte/elements";
+  import type { SortDirection } from ".";
 
-  let { children, sortable = false, sorting, onSort, ...restProps }: {
+  let { children, sortable = false, sorting, onSort, initDirection, ...restProps }: {
     children: any;
     sortable?: boolean; // column can be used for sorting
     sorting?: boolean; // table currently is sorted by this column
     onSort?: (desc: boolean) => void; // called when the column is clicked
+    initDirection?: SortDirection; // initial sorting direction
   } & HTMLThAttributes = $props();
 
-  let desc = $state(true);
+  let desc = $state(initDirection === "desc");
   $effect(() => {
     if (!sorting) {
       desc = true;
@@ -17,22 +19,21 @@
 
   function handleSortClick() {
     if (!sortable) return;
-
-    if (sorting) desc = !desc;
+    desc = !desc;
     onSort?.(desc);
   }
 </script>
 
 <th {...restProps}>
-  <button class="flexer" class:inactive={!sortable} onclick={handleSortClick}>
+  <button class="flexer" class:unsortable={!sortable} onclick={handleSortClick}>
     <div>
       {@render children()}
     </div>
 
     {#if sortable}
-      <div>
+      <div class:active={sorting}>
         {#if desc}
-          <i class="fas fa-sort-down" class:inactive={!sorting}></i>
+          <i class="fas fa-sort-down"></i>
         {:else}
           <i class="fas fa-sort-up"></i>
         {/if}
@@ -59,12 +60,16 @@
     font-size: 1em;
   }
 
-  .flexer.inactive {
+  .flexer.unsortable {
     cursor: auto;
   }
 
-  i.inactive {
+  i {
     color: #ddd;
+  }
+
+  div.active i {
+    color: #000;
   }
 </style>
 

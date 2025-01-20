@@ -3,6 +3,9 @@ import type { TdStatus } from "./component/table";
 export const DEFAULT_OFFSETS = [ 1, 3, 6 ];
 
 export function formatDateLocale(date: Date): string {
+  if (typeof date === "string") {
+    date = new Date(date);
+  }
   const formattedDate = date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'numeric',

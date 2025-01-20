@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import { obtain } from '$lib/api.client';
   import EditProject from '$lib/component/project/EditProject.svelte';
-  import { Table, Td, Th, Tr } from '$lib/component/table';
+  import { Table, Td, Th, Thead, Tr } from '$lib/component/table';
   import { setLoadingState } from '$lib/store/global.svelte';
   import TaskRow from './TaskRow.svelte';
   import type { PageProps } from './util';
@@ -31,22 +31,27 @@
 
     goto('/app');
   }
+
+  const columns = [
+    { key: "num", label: "#" },
+    { key: "name", label: "Task", sortable: true },
+    { key: "next_iter_at", label: "Iterations", sortable: true, sorting: true, colspan: 99 },
+  ];
 </script>
 
 {#if !editing}
   <h1>{project.name}</h1>
   <p>{project.description}</p>
 
-  <h2>Tasks</h2>
   <div class="striped">
     <Table>
-      <thead>
+      <Thead {columns}>
         <Tr>
           <Th>#</Th>
           <Th>Task</Th>
           <Th colspan={99}>Iterations</Th>
         </Tr>
-      </thead>
+      </Thead>
       <tbody>
         {#if tasks.length === 0}
           <Tr>

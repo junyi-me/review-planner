@@ -1,34 +1,61 @@
 <script lang="ts">
-  import type { ProjectMinIter } from "$lib/api";
+  import { getPgParams, type PageOpts, type ProjectMinIter } from "$lib/api";
+  import { obtain } from "$lib/api.client";
   import DateCell from "$lib/component/DateCell.svelte";
   import { Td, Thead, Tr } from "$lib/component/table";
   import Table from "$lib/component/table/table.svelte";
-    import { setLoadingState } from "$lib/store/global.svelte";
+  import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatDateLocale } from "$lib/util";
+  import type { ProjectSortBy } from "./util";
 
-  let { projects: projectTasks }: { projects: ProjectMinIter[] } = $props();
+  let { projects }: { projects: ProjectMinIter[] } = $props();
+  let projectTasks = $state(projects);
+  $inspect(projectTasks);
 
-  const columns = [
+  type SortColumn = {
+    key: ProjectSortBy;
+    label: string;
+    sortable: boolean;
+    sorting?: boolean;
+  }
+  type NonSortColumn = {
+    key: string;
+    label: string;
+  }
+
+  const columns: (SortColumn|NonSortColumn)[] = [
     { key: "num", label: "#" },
-    { key: "name", label: "Name", sortable: true },
+    { key: "name", label: "Project", sortable: true },
     { key: "desc", label: "Description" },
-    { key: "next", label: "Next iteration", sortable: true },
-    { key: "created", label: "Created", sortable: true },
+    { key: "min_next_iter_at", label: "Next iteration", sortable: true, sorting: true },
+    { key: "createdAt", label: "Created", sortable: true },
   ];
 
   async function handleSort(key: string, desc: boolean) {
     setLoadingState(true);
 
-    console.log({ key, desc });
+    const pg: PageOpts = {
+      page: 1, // TODO
+      pageSize: 50, // TODO
+      desc,
+      sortBy: key,
+      search: null, // TODO
+    };
+    const resp = await obtain(`/app?${getPgParams(pg)}`);
 
-    // wait 1 second
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!resp.ok) {
+      console.error("Failed to sort", resp);
+      setToastState({ type: "error", message: "Failed to sort" });
+      setLoadingState(false);
+      return;
+    }
 
+    const data = await resp.json();
+    projectTasks = data.projects;
     setLoadingState(false);
   }
 </script>
 
-<h2>Projects</h2>
 <div class="striped">
   <Table>
     <Thead {columns} onSort={handleSort} />
