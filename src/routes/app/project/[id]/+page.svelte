@@ -1,14 +1,16 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { getPgParams, type PageOpts } from '$lib/api';
   import { obtain } from '$lib/api.client';
   import EditProject from '$lib/component/project/EditProject.svelte';
-  import { Table, Td, Th, Thead, Tr } from '$lib/component/table';
-  import { setLoadingState } from '$lib/store/global.svelte';
+  import { Table, Td, Thead, Tr } from '$lib/component/table';
+  import { setLoadingState, setToastState } from '$lib/store/global.svelte';
   import TaskRow from './TaskRow.svelte';
   import type { PageProps } from './util';
 
   let { data }: { data: PageProps } = $props();
-  let { project, tasks } = data;
+  let { project } = data;
+  let tasks = $state(data.tasks);
 
   let editing = $state(false);
 
@@ -37,6 +39,30 @@
     { key: "name", label: "Task", sortable: true },
     { key: "next_iter_at", label: "Iterations", sortable: true, sorting: true, colspan: 99 },
   ];
+
+  async function handleSort(key: string, desc: boolean) {
+    setLoadingState(true);
+
+    const pg: PageOpts = {
+      page: 1, // TODO
+      pageSize: 50, // TODO
+      desc,
+      sortBy: key,
+      search: null, // TODO
+    };
+    const resp = await obtain(`/app/project/${project.id}?${getPgParams(pg)}`);
+
+    if (!resp.ok) {
+      console.error("Failed to sort", resp);
+      setToastState({ type: "error", message: "Failed to sort" });
+      setLoadingState(false);
+      return;
+    }
+
+    const data = await resp.json();
+    tasks = data.tasks;
+    setLoadingState(false);
+  }
 </script>
 
 {#if !editing}
@@ -45,23 +71,17 @@
 
   <div class="striped">
     <Table>
-      <Thead {columns}>
-        <Tr>
-          <Th>#</Th>
-          <Th>Task</Th>
-          <Th colspan={99}>Iterations</Th>
-        </Tr>
-      </Thead>
+      <Thead {columns} onSort={handleSort} />
       <tbody>
         {#if tasks.length === 0}
           <Tr>
             <Td colspan={99} class="nocontent">No tasks</Td>
           </Tr>
         {/if}
-        {#each tasks as task, i}
+        {#each tasks as _, i}
           <Tr>
             <Td>{i+1}</Td>
-            <TaskRow {task} />
+            <TaskRow bind:task={tasks[i]} />
           </Tr>
         {/each}
       </tbody>

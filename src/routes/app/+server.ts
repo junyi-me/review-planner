@@ -1,7 +1,6 @@
 import { getTokenPayload } from "$lib/server/util";
 import type { RequestEvent } from "./$types";
-import { getProjects } from "./query.server";
-import { getProjectPaging } from "./util";
+import { getProjectPaging, getProjects } from "./query.server";
 
 export async function GET({ url, locals }: RequestEvent) {
   const user = getTokenPayload(locals);

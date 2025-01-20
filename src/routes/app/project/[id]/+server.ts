@@ -4,10 +4,18 @@ import { validateProject, type PutProjectReq } from "$lib/api";
 import { and, eq } from "drizzle-orm";
 import { project, task } from "$lib/server/db/schema";
 import { db } from "$lib/server/db";
+import { getTaskPaging, getTasks } from "./query.server";
 
 async function getProjectForUser(projId: number, userId: number) {
   return await db.select().from(project)
     .where(and(eq(project.id, projId), eq(project.ownerId, userId)));
+}
+
+export async function GET({ url, params, locals }: RequestEvent) {
+  const projId = parseInt(params.id);
+  const user = getTokenPayload(locals);
+  let { tasks } = await getTasks(user.userId, projId, getTaskPaging(url.searchParams));
+  return new Response(JSON.stringify({ tasks }), { status: 200 });
 }
 
 export async function PUT({ params, locals, request }: RequestEvent) {

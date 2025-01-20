@@ -9,8 +9,7 @@
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatStrDateLocale, getCurrentDateInputFormat } from "$lib/util";
 
-  let { task: taskProps }: { task: TaskRow } = $props();
-  let task = $state(taskProps);
+  let { task = $bindable() }: { task: TaskRow } = $props();
   let iterations = $derived(task.iterations);
 
   type IterCanbeDone = Iteration & { canToggle: boolean };

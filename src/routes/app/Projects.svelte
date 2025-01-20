@@ -10,7 +10,6 @@
 
   let { projects }: { projects: ProjectMinIter[] } = $props();
   let projectTasks = $state(projects);
-  $inspect(projectTasks);
 
   type SortColumn = {
     key: ProjectSortBy;
