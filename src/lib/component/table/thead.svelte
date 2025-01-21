@@ -1,14 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
   import { Th } from ".";
-
-  type TableCol = {
-    key: string;
-    label: string;
-    sortable?: boolean;
-    colspan?: number;
-    sorting?: boolean;
-  }
+  import type { TableCol } from "./util";
 
   let { columns, onSort, ...restProps }: {
     columns: TableCol[];

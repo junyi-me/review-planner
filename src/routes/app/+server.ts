@@ -5,7 +5,7 @@ import { getProjectPaging, getProjects } from "./query.server";
 export async function GET({ url, locals }: RequestEvent) {
   const user = getTokenPayload(locals);
   const opts = getProjectPaging(url.searchParams);
-  const projects = await getProjects(opts, user);
+  const projects = await getProjects(opts, user.userId);
   return new Response(JSON.stringify({ projects }), { status: 200 });
 }
 

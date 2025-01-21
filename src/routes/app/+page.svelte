@@ -5,7 +5,5 @@
   let { data }: { data: GetProjectResp } = $props();
 </script>
 
-<h1>Dashboard</h1>
-
-<Projects projects={data.projects} />
+<Projects projects={data.projects} total={data.total} />
 
