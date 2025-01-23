@@ -59,6 +59,11 @@
         <Td>{i + 1}</Td>
         <Td>
           <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
+          {#if pt.project.link}
+            <a href={pt.project.link} target="_blank" aria-label="external">
+              <i class="fas fa-external-link-alt">
+            </a>
+          {/if}
         </Td>
         <Td>{pt.project.description}</Td>
         <DateCell date={pt.task?.min_next_iter_at} done={false} />
