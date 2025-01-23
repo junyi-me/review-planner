@@ -45,6 +45,7 @@ export type ProjectMinIter = {
 
 export type GetProjectResp = {
   projects: ProjectMinIter[];
+  total: number;
 }
 
 export function validateProject(project: ProjectPartial) {
@@ -117,8 +118,8 @@ export type PageOptsSql = PageOpts & {
 
 export function getPaging(params: URLSearchParams): PageOptsSql {
   return {
-    page: parseInt(params.get(URL_PARAM_KEY.PAGE) ?? '1'),
-    pageSize: parseInt(params.get(URL_PARAM_KEY.PAGE_SIZE) ?? DEFAULT_PAGE_SIZE.toString()),
+    page: params.has(URL_PARAM_KEY.PAGE) ? parseInt(params.get(URL_PARAM_KEY.PAGE)!) : 1,
+    pageSize: params.has(URL_PARAM_KEY.PAGE_SIZE) ? parseInt(params.get(URL_PARAM_KEY.PAGE_SIZE)!) : DEFAULT_PAGE_SIZE,
     desc: params.get(URL_PARAM_KEY.DESC) === 'true',
     sortBy: params.get(URL_PARAM_KEY.SORT_BY),
     search: params.get(URL_PARAM_KEY.SEARCH),

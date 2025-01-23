@@ -3,13 +3,14 @@
   import { getPgParams, type PageOpts } from '$lib/api';
   import { obtain } from '$lib/api.client';
   import EditProject from '$lib/component/project/EditProject.svelte';
-  import { Table, Td, Thead, Tr } from '$lib/component/table';
+  import { Table, Td, Tr } from '$lib/component/table';
+  import { DEFAULT_PAGE_SIZE } from '$lib/const';
   import { setLoadingState, setToastState } from '$lib/store/global.svelte';
   import TaskRow from './TaskRow.svelte';
   import type { PageProps } from './util';
 
   let { data }: { data: PageProps } = $props();
-  let { project } = data;
+  let { project, taskCount } = data;
   let tasks = $state(data.tasks);
 
   let editing = $state(false);
@@ -40,16 +41,17 @@
     { key: "next_iter_at", label: "Iterations", sortable: true, sorting: true, colspan: 99 },
   ];
 
-  async function handleSort(key: string, desc: boolean) {
+  const initPageOpts = {
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    desc: false,
+    sortBy: "next_iter_at",
+    search: null,
+  }
+
+  async function handleSort(pg: PageOpts) {
     setLoadingState(true);
 
-    const pg: PageOpts = {
-      page: 1, // TODO
-      pageSize: 50, // TODO
-      desc,
-      sortBy: key,
-      search: null, // TODO
-    };
     const resp = await obtain(`/app/project/${project.id}?${getPgParams(pg)}`);
 
     if (!resp.ok) {
@@ -71,8 +73,7 @@
   <p>{project.description}</p>
 
   <div class="striped">
-    <Table>
-      <Thead {columns} onSort={handleSort} />
+    <Table {columns} dtProps={{ onPageChange: handleSort, total: taskCount, initPageOpts }}>
       <tbody>
         {#if tasks.length === 0}
           <Tr>

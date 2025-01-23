@@ -17,7 +17,10 @@
 
   let page = $state(initPg);
   function handlePgClick(pg: number) {
+<<<<<<< HEAD
     if (pg === page) return;
+=======
+>>>>>>> master
     page = pg;
     onFlip(pg);
   }

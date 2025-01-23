@@ -78,15 +78,12 @@
   </div>
 
   <div class="striped">
-    <Table>
-      <thead>
-        <Tr>
-          <Th>Iteration</Th>
-          <Th>Planned at</Th>
-          <Th>Done</Th>
-          <Th>Actions</Th>
-        </Tr>
-      </thead>
+    <Table columns={[
+      { key: "iter", label: "Iteration" },
+      { key: "plannedAt", label: "Planned at" },
+      { key: "done", label: "Done" },
+      { key: "actions", label: "Actions" },
+    ]}>
       <tbody>
         {#each iterations as iter, i}
           <Tr>

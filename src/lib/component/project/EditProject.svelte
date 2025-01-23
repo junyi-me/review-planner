@@ -3,7 +3,10 @@
   import { obtain } from "$lib/api.client";
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
+<<<<<<< HEAD
   import { getLinkFromClipboard } from "$lib/util";
+=======
+>>>>>>> master
   import { Table, Td, Tr } from "../table";
 
   let { project: initProj, onSave, onCancel }: {
@@ -69,14 +72,11 @@
   <p>Default offset days for new tasks.</p>
 
   <div class="striped">
-    <Table>
-      <thead>
-        <Tr>
-          <Th>Iteration</Th>
-          <Th>+days</Th>
-          <Th>Actions</Th>
-        </Tr>
-      </thead>
+    <Table columns={[
+      { key: "iter", label: "Iterations" },
+      { key: "days", label: "+days" },
+      { key: "actions", label: "Actions" },
+    ]}>
       <tbody>
         <Tr>
           <Td>1</Td>

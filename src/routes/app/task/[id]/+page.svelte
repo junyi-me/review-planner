@@ -50,14 +50,11 @@
 
   <h2>Iterations</h2>
   <div class="striped">
-    <Table>
-      <thead>
-        <Tr>
-          <Th>#</Th>
-          <Th>Planned</Th>
-          <Th>Done</Th>
-        </Tr>
-      </thead>
+    <Table columns={[
+      { key: "num", label: "#" },
+      { key: "plannedAt", label: "Planned at" },
+      { key: "done", label: "Done" },
+    ]}>
       <tbody>
         {#each task.iterations as iter, i}
           <Tr>

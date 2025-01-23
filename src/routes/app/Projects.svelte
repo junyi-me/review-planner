@@ -2,27 +2,17 @@
   import { getPgParams, type PageOpts, type ProjectMinIter } from "$lib/api";
   import { obtain } from "$lib/api.client";
   import DateCell from "$lib/component/DateCell.svelte";
-  import { Td, Thead, Tr } from "$lib/component/table";
+  import { Td, Tr } from "$lib/component/table";
   import Table from "$lib/component/table/table.svelte";
+  import type { TableCol } from "$lib/component/table/util";
+  import { DEFAULT_PAGE_SIZE, MIN_NEXT_ITER_AT } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatDateLocale } from "$lib/util";
-  import type { ProjectSortBy } from "./util";
 
-  let { projects }: { projects: ProjectMinIter[] } = $props();
+  let { projects, total }: { projects: ProjectMinIter[], total: number } = $props();
   let projectTasks = $state(projects);
 
-  type SortColumn = {
-    key: ProjectSortBy;
-    label: string;
-    sortable: boolean;
-    sorting?: boolean;
-  }
-  type NonSortColumn = {
-    key: string;
-    label: string;
-  }
-
-  const columns: (SortColumn|NonSortColumn)[] = [
+  const columns: TableCol[] = [
     { key: "num", label: "#" },
     { key: "name", label: "Project", sortable: true },
     { key: "desc", label: "Description" },
@@ -30,17 +20,18 @@
     { key: "createdAt", label: "Created", sortable: true },
   ];
 
-  async function handleSort(key: string, desc: boolean) {
+  const initPageOpts: PageOpts = {
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    desc: false,
+    sortBy: MIN_NEXT_ITER_AT,
+    search: null, // TODO
+  };
+
+  async function handleSearch(pgOpts: PageOpts) {
     setLoadingState(true);
 
-    const pg: PageOpts = {
-      page: 1, // TODO
-      pageSize: 50, // TODO
-      desc,
-      sortBy: key,
-      search: null, // TODO
-    };
-    const resp = await obtain(`/app?${getPgParams(pg)}`);
+    const resp = await obtain(`/app?${getPgParams(pgOpts)}`);
 
     if (!resp.ok) {
       console.error("Failed to sort", resp);
@@ -55,29 +46,27 @@
   }
 </script>
 
-<div class="striped">
-  <Table>
-    <Thead {columns} onSort={handleSort} />
-    <tbody>
-      {#if projectTasks.length === 0}
-        <Tr>
-          <Td colspan={99} class="nocontent">No projects</Td>
-        </Tr>
-      {/if}
-      {#each projectTasks as pt, i}
-        <Tr>
-          <Td>{i + 1}</Td>
-          <Td>
-            <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
-          </Td>
-          <Td>{pt.project.description}</Td>
-          <DateCell date={pt.task?.min_next_iter_at} done={false} />
-          <Td>{formatDateLocale(pt.project.createdAt)}</Td>
-        </Tr>
-      {/each}
-    </tbody>
-  </Table>
-</div>
+<h1>Projects</h1>
+<Table {columns} dtProps={{ onPageChange: handleSearch, total, initPageOpts }}>
+  <tbody>
+    {#if projectTasks.length === 0}
+      <Tr>
+        <Td colspan={99} class="nocontent">No projects</Td>
+      </Tr>
+    {/if}
+    {#each projectTasks as pt, i}
+      <Tr>
+        <Td>{i + 1}</Td>
+        <Td>
+          <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
+        </Td>
+        <Td>{pt.project.description}</Td>
+        <DateCell date={pt.task?.min_next_iter_at} done={false} />
+        <Td>{formatDateLocale(pt.project.createdAt)}</Td>
+      </Tr>
+    {/each}
+  </tbody>
+</Table>
 <br />
 
 <a href="/app/project/create">Create project</a>

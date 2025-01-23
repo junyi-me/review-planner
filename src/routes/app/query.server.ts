@@ -1,9 +1,8 @@
 import { db } from "$lib/server/db";
 import { project, task } from "$lib/server/db/schema";
-import type { TokenPayload } from "$lib/server/jwt";
 import { getPaging, type PageOptsSql } from "$lib/api";
-import { MIN_NEXT_ITER_AT } from "./util";
-import { eq, SQL, sql, type AnyColumn, type SQLWrapper } from "drizzle-orm";
+import { count, eq, SQL, sql, type AnyColumn, type SQLWrapper } from "drizzle-orm";
+import { MIN_NEXT_ITER_AT } from "$lib/const";
 
 export type ProjectsPageOpts = PageOptsSql & {
   orderBy: SQL<unknown>;
@@ -22,7 +21,12 @@ export function getProjectPaging(params: URLSearchParams): ProjectsPageOpts {
   return { ...pg, orderBy };
 }
 
-export async function getProjects(opts: ProjectsPageOpts, user: TokenPayload) {
+export async function getProjectCount(userId: number) {
+  const cnt = await db.select({ count: count() }).from(project).where(eq(project.ownerId, userId));
+  return cnt[0].count;
+}
+
+export async function getProjects(opts: ProjectsPageOpts, userId: number) {
   const sq = db.select({
     projectId: task.projectId,
     min_next_iter_at: sql<Date>`min(${task.nextIterAt})`.as(MIN_NEXT_ITER_AT),
@@ -30,7 +34,7 @@ export async function getProjects(opts: ProjectsPageOpts, user: TokenPayload) {
 
   const projects = await db.select().from(project)
     .leftJoin(sq, eq(project.id, sq.projectId))
-    .where(eq(project.ownerId, user.userId))
+    .where(eq(project.ownerId, userId))
     .orderBy(opts.orderBy)
     .limit(opts.pageSize).offset(opts.getOffset());
 
