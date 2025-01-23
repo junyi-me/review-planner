@@ -3,10 +3,7 @@
   import { obtain } from "$lib/api.client";
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
-<<<<<<< HEAD
   import { getLinkFromClipboard } from "$lib/util";
-=======
->>>>>>> master
   import { Table, Td, Tr } from "../table";
 
   let { project: initProj, onSave, onCancel }: {
