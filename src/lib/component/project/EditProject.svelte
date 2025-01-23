@@ -3,7 +3,8 @@
   import { obtain } from "$lib/api.client";
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
-  import { Table, Td, Th, Tr } from "../table";
+  import { getLinkFromClipboard } from "$lib/util";
+  import { Table, Td, Tr } from "../table";
 
   let { project: initProj, onSave, onCancel }: {
     project: ProjectPartial;
@@ -17,6 +18,11 @@
   function handleOffsetDayChange(i: number, e: Event) {
     const target = e.target as HTMLInputElement;
     project.offsetDays[i] = parseInt(target.value);
+  }
+
+  async function handleTitlePaste(e: ClipboardEvent) {
+    const url = await getLinkFromClipboard(e);
+    if (url) project.link= url;
   }
 
   async function save() {
@@ -52,7 +58,9 @@
 
 <div class="container">
   <div class="inputs">
-    <input class="title" type="text" value={project.name} oninput={e => project.name = (e.target as HTMLInputElement).value} />
+    <input class="title" type="text" value={project.name} onpaste={handleTitlePaste} oninput={e => project.name = (e.target as HTMLInputElement).value} />
+    <br />
+    <input type="text" bind:value={project.link} />
     <br />
     <textarea value={project.description} oninput={e => project.description = (e.target as HTMLTextAreaElement).value}></textarea>
   </div>

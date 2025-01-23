@@ -22,6 +22,7 @@ export const project = pgTable("project", {
   ...commonFields,
   ownerId: integer("owner_id").notNull().references(() => user.id),
   name: text("name").notNull(),
+  link: text("link"),
   description: text("description"),
   offsetDays: json("offset_days").$type<number[]>().notNull(),
 });
@@ -44,6 +45,7 @@ export const task = pgTable("task", {
   projectId: integer("project_id").notNull().references(() => project.id),
   link: text("link"),
   description: text("description"),
+  firstIterAt: date("first_iter_at").notNull(),
   nextIterAt: date("next_iter_at"),
   doneAt: date("done_at"),
   iterations: json("iters").$type<Iteration[]>().notNull(),

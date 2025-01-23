@@ -27,6 +27,7 @@ export type PutTaskResp = {
 export type ProjectPartial = {
   id?: number;
   name: string;
+  link?: string | null;
   description?: string | null;
   offsetDays: number[];
 }

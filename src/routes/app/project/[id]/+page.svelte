@@ -67,6 +67,7 @@
 
 {#if !editing}
   <h1>{project.name}</h1>
+  <a href={project.link} target="_blank">{project.link}</a>
   <p>{project.description}</p>
 
   <div class="striped">

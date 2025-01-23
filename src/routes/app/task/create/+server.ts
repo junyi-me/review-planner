@@ -20,13 +20,15 @@ export async function POST({ locals, request }: RequestEvent) {
     return new Response(null, { status: 404 });
   }
 
+  const firstIterAt = pTask.iterations[0].plannedAt;
   const newTasks = await db.insert(task).values({
     projectId: pTask.projectId,
     name: pTask.name,
     description: pTask.description,
     link: pTask.link,
     iterations: pTask.iterations,
-    nextIterAt: pTask.iterations[0].plannedAt,
+    firstIterAt,
+    nextIterAt: firstIterAt,
   }).returning({ id: task.id });
   if (newTasks.length !== 1) {
     console.error("Failed to create task");

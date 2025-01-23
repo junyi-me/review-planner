@@ -5,7 +5,7 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
-  import { Table, Td, Th, Tr } from "../table";
+  import { Table, Td, Tr } from "../table";
   import { convertIters, updateIterPlannedAt } from "./componentUtil";
 
   let { task: initTask, onSave, onCancel }: {
