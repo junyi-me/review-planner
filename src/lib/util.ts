@@ -90,6 +90,10 @@ export function getDateDiff(date1: string, date2: string) {
   return differenceInDays;
 }
 
+export function isSameDate(date1: Date, date2: Date): boolean {
+  return date1.toDateString() === date2.toDateString();
+}
+
 /**
   * Add an offset to a date
   * @param date - The date to add the offset to

@@ -46,6 +46,7 @@
   }
 </script>
 
+<h1>Projects</h1>
 <Table {columns} dtProps={{ onPageChange: handleSearch, total, initPageOpts }}>
   <tbody>
     {#if projectTasks.length === 0}
