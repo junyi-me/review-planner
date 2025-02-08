@@ -1,7 +1,8 @@
 <script lang="ts">
   import { isSameDate } from "$lib/util";
   import DateGrid from "./DateGrid.svelte";
-  import type { CalEvent } from "./util";
+  import DayTasks from "./DayTasks.svelte";
+  import { getCalendarEdgeDays, type CalEvent } from "./util";
 
   let { 
     initEvents, 
@@ -16,18 +17,12 @@
   let current = $state(today);
   let year = $derived(current.getFullYear());
   let month = $derived(current.getMonth());
+  let focus = $state(today);
 
-  const numGrids = 35;
   function getVisibleDays() {
     // Calculate the number of days in the previous month
-    const start = new Date(year, month, 1);
     const end = new Date(year, month + 1, 0);
-    const prevMonthDays = start.getDay(); // Days to fill from the previous month
-    const nextMonthDays = function() { // Days to fill from the next month
-      let days = numGrids - prevMonthDays - end.getDate();
-      if (days < 0) days += 7; // need one more row
-      return days;
-    }();
+    const { prevMonthDays, nextMonthDays } = getCalendarEdgeDays(year, month);
 
     // Calculate dates for the previous month
     const prevMonth = month - 1 < 0 ? 11 : month - 1;
@@ -59,12 +54,27 @@
   let firstDate = $derived(dates[0]);
   let lastDate = $derived(dates[dates.length - 1]);
 
+  function updateFocus() {
+    if (today.getMonth() === month && today.getFullYear() === year) {
+      focus = today;
+    } else {
+      focus = new Date(year, month, 1);
+    }
+  }
+
   function prevMonth() {
     current = new Date(year, month - 1, 1);
+    updateFocus();
   }
 
   function nextMonth() {
     current = new Date(year, month + 1, 1);
+    updateFocus();
+  }
+
+  function toCurrentMonth() {
+    current = today;
+    updateFocus();
   }
 
   let events = $state(initEvents ?? []);
@@ -75,44 +85,58 @@
       });
     }
   });
-  $inspect(events);
+  let focusEvents = $derived(events.filter(e => isSameDate(e.date, focus)));
 </script>
 
-<div class="calendar">
-  <div class="calendar-header">
-    <button onclick={prevMonth} aria-label="prevMonth">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    <button onclick={() => current = today}>
-      {`${year} - ${`00${month + 1}`.slice(-2)}`}
-    </button>
-    <button onclick={nextMonth} aria-label="nextMonth">
-      <i class="fas fa-chevron-right"></i>
-    </button>
-  </div>
-  <div class="calendar-body">
-    <div class="table head">
-      {#each ['S','M','T','W','T','F','S'] as weekday}        
-        <div class="cell" class:weekend={weekday === 'S'}>
-          {weekday}
-        </div>
-      {/each}
+<div class="container">
+  <div class="calendar">
+    <div class="calendar-header">
+      <button onclick={prevMonth} aria-label="prevMonth">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button onclick={toCurrentMonth}>
+        {`${year} - ${`00${month + 1}`.slice(-2)}`}
+      </button>
+      <button onclick={nextMonth} aria-label="nextMonth">
+        <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
-    <div class="table dates">
-      {#each dates as date}
-        <div class="cell" class:today={date && date.toDateString() === today.toDateString()}
-          class:foreign={date?.getMonth() !== month}>
-          <div class="dateLabel">
-            {date?.getDate() ?? ""}
+    <div class="calendar-body">
+      <div class="table head">
+        {#each ['S','M','T','W','T','F','S'] as weekday}        
+          <div class="cell" class:weekend={weekday === 'S'}>
+            {weekday}
           </div>
-          <DateGrid events={events.filter(e => isSameDate(e.date, date))} />
-        </div>
-      {/each}
+        {/each}
+      </div>
+      <div class="table dates">
+        {#each dates as date}
+          <div class="cell" 
+            class:today={date && isSameDate(date, today)}
+            class:focused={date && isSameDate(date, focus)}
+            class:foreign={date?.getMonth() !== month}
+            onclick={() => focus = date} role="button" onkeydown={() => {}} tabindex={0}>
+            <div class="dateLabel">
+              {date?.getDate() ?? ""}
+            </div>
+            <DateGrid events={events.filter(e => isSameDate(e.date, date))} />
+          </div>
+        {/each}
+      </div>
     </div>
+  </div>
+
+  <div>
+    <DayTasks date={focus} events={focusEvents} />
   </div>
 </div>
 
 <style>
+  .container {
+    display: flex;
+    gap: 1em;
+  }
+
   .calendar {
     color: rgb(66,66,66);
     width: fit-content;
@@ -143,14 +167,13 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    width: 6em;
-    height: 6em;
+    width: 8em;
+    height: 8em;
     border-bottom: 1px solid rgb(66,66,66);
     padding: 0.5em;
   }
 
   .head .cell {
-    aspect-ratio: auto;
     height: 1.5em;
   }
 
@@ -176,9 +199,10 @@
 
   .dateLabel {
     display: block;
-    width: fit-content;
+    width: 1em;
     padding: 0.25em;
     border-radius: 50%;
+    text-align: center;
   }
 
   .today .dateLabel {
@@ -188,6 +212,10 @@
 
   .foreign {
     background-color: rgb(240, 240, 240);
+  }
+
+  .focused {
+    background-color: #ccdbeb;
   }
 </style>
 

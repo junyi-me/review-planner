@@ -29,18 +29,20 @@ export async function PUT({ params, locals, request }: RequestEvent) {
   const dbTask = taskProjs[0].task;
 
   const nextIterAt = pTask.iterations.find(iter => !iter.done)?.plannedAt ?? null;
-  const doneAt = nextIterAt ? null : pTask.iterations[pTask.iterations.length - 1].plannedAt;
+  const firstIterAt = pTask.iterations[0].plannedAt;
+  const lastIterAt = pTask.iterations[pTask.iterations.length - 1].plannedAt;
 
   await db.update(task).set({
     name: pTask.name,
     description: pTask.description,
     link: pTask.link,
     iterations: pTask.iterations,
+    firstIterAt,
     nextIterAt,
-    doneAt,
+    lastIterAt,
   }).where(eq(task.id, dbTask.id));
 
-  return new Response(JSON.stringify({ doneAt, nextIterAt } as PutTaskResp), { status: 200 });
+  return new Response(JSON.stringify({ done: nextIterAt === null, nextIterAt } as PutTaskResp), { status: 200 });
 }
 
 export async function DELETE({ params, locals }: RequestEvent) {

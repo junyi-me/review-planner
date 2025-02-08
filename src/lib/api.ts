@@ -20,7 +20,7 @@ export type PutTaskReq = {
 }
 
 export type PutTaskResp = {
-  doneAt: string | null;
+  done: boolean;
   nextIterAt: string | null;
 }
 

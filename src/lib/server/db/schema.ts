@@ -47,7 +47,7 @@ export const task = pgTable("task", {
   description: text("description"),
   firstIterAt: date("first_iter_at").notNull(),
   nextIterAt: date("next_iter_at"),
-  doneAt: date("done_at"),
+  lastIterAt: date("last_iter_at").notNull(),
   iterations: json("iters").$type<Iteration[]>().notNull(),
 });
 

@@ -23,6 +23,7 @@
   }
 
   function getPageSegment(center: number, radius: number) {
+    if (totalPgs <= 1) return [1];
     const start = center - radius;
     const end = center + radius;
     return Array.from({ length: end - start + 1 }, (_, i) => start + i).filter(pg => pg > 0 && pg <= totalPgs);
@@ -38,7 +39,7 @@
     <i class="fas fa-angle-double-left"></i>
   </button>
 
-  <button aria-label="first"
+  <button aria-label="prev"
     disabled={page === 1}
     onclick={() => handlePgClick(page - 1)}
   >
@@ -46,7 +47,7 @@
   </button>
 
   {#each segment as pg}
-    <button aria-label="first"
+    <button aria-label="cur"
       class:active={pg === page}
       onclick={() => handlePgClick(pg)}
     >
@@ -54,15 +55,15 @@
     </button>
   {/each}
 
-  <button aria-label="first"
-    disabled={page === totalPgs}
+  <button aria-label="next"
+    disabled={page >= totalPgs}
     onclick={() => handlePgClick(page + 1)}
   >
     <i class="fas fa-angle-right"></i>
   </button>
 
-  <button aria-label="first"
-    disabled={page === totalPgs}
+  <button aria-label="last"
+    disabled={page >= totalPgs}
     onclick={() => handlePgClick(totalPgs)}
   >
     <i class="fas fa-angle-double-right"></i>

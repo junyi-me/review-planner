@@ -29,6 +29,7 @@ export async function POST({ locals, request }: RequestEvent) {
     iterations: pTask.iterations,
     firstIterAt,
     nextIterAt: firstIterAt,
+    lastIterAt: pTask.iterations[pTask.iterations.length - 1].plannedAt,
   }).returning({ id: task.id });
   if (newTasks.length !== 1) {
     console.error("Failed to create task");

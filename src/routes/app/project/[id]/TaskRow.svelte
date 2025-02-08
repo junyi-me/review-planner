@@ -50,7 +50,9 @@
     }
 
     const data = await resp.json() as PutTaskResp;
-    task.doneAt = data.doneAt;
+    if (data.done) {
+      task.nextIterAt = null;
+    }
 
     setLoadingState(false);
   }
@@ -60,7 +62,7 @@
   <Loading fullScreen={true} />
 {/if}
 
-<Td status={task.doneAt ? "success" : "normal"}>
+<Td status={task.nextIterAt ? "normal" : "success"}>
   <a href="/app/task/{task.id}/">{task.name}</a>
   {#if task.link}
     <a href={task.link} target="_blank" aria-label="external">

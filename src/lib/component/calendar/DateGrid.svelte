@@ -9,11 +9,19 @@
 </script>
 
 <div class="container">
-  {#each events as event}
-    <button class="event">
-      <span>{event.title}</span>
-    </button>
+  {#each events.slice(0, 3) as event}
+    <a class="event" href={event.links[0]?.url}>
+      <span>
+        {#if event.done}
+          ✅
+        {/if}
+        {event.title}
+      </span>
+    </a>
   {/each}
+  {#if events.length > 3}
+    <span>...</span>
+  {/if}
 </div>
 
 <style>

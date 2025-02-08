@@ -36,7 +36,7 @@ export function getCurrentDateInputFormat(): string {
   * @param date - The date string to parse (yyyy-mm-dd)
   * @returns The Date object
   */
-function strToDate(date: string): Date {
+export function strToDate(date: string): Date {
   const [year, month, day] = date.split('-').map(Number);
   const dateObj = new Date(year, month - 1, day);
   return dateObj;
@@ -91,7 +91,7 @@ export function getDateDiff(date1: string, date2: string) {
 }
 
 export function isSameDate(date1: Date, date2: Date): boolean {
-  return date1.toDateString() === date2.toDateString();
+  return date1.toLocaleDateString() === date2.toLocaleDateString();
 }
 
 /**

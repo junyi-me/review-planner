@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { obtain } from "$lib/api.client";
   import EditTask from "$lib/component/project/EditTask.svelte";
-  import { Table, Td, Th, Tr } from "$lib/component/table";
+  import { Table, Td, Tr } from "$lib/component/table";
   import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
   import { setLoadingState } from "$lib/store/global.svelte";
 
@@ -39,8 +39,8 @@
 
 {#if !editing}
   <h1>{task.name}</h1>
-  {#if task.doneAt}
-    <p>✅ {task.doneAt}</p>
+  {#if !task.nextIterAt}
+    <p>✅ {task.lastIterAt}</p>
   {/if}
 
   {#if task.link}
