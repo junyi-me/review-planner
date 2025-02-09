@@ -34,5 +34,5 @@ jobs:
           fi
 
           docker build -t $DOCKER_REPO:$tag .
-          docker docker push $DOCKER_REPO:$tag
+          docker push $DOCKER_REPO:$tag
 
