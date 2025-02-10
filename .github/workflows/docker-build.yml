@@ -26,13 +26,14 @@ jobs:
 
       - name: Build, tag, and push
         run: |
-          dt=$(date +'%Y%m%d')
+          dateTag=$(date +'%Y%m%d')
           if [ $BRANCH_NAME == 'master' ]; then
-            tag=prd-$dt
+            tag=prd
           else
-            tag=$BRANCH_NAME-$dt
+            tag=$BRANCH_NAME
           fi
 
-          docker build -t $DOCKER_REPO:$tag .
+          docker build -t $dateTag -t $DOCKER_REPO:$tag .
+          docker push $DOCKER_REPO:$dateTag
           docker push $DOCKER_REPO:$tag
 
