@@ -24,15 +24,18 @@
 
 <style>
   .container {
-    z-index: 1002;
     position: fixed;
-    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
-    padding-top: var(--gap-medium);
+    padding: 1em;
+    pointer-events: none;
   }
 
   .toast {
+    z-index: 1002;
     position: fixed;
     background-color: #00cc00;
     color: var(--bg-1);

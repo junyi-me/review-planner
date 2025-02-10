@@ -19,11 +19,13 @@
   <Loading fullScreen />
 {/if}
 
-<div class="container">
+<div class="nav-container">
   <nav>
-    <a href="/">Top</a>
+    <img src="/favicon.webp" alt="logo" width="32" height="32" />
     {#if $loggedIn}
       <a href="/app">Dashboard</a>
+    {:else}
+      <a href="/">Top</a>
     {/if}
   </nav>
 
@@ -36,12 +38,32 @@
   </nav>
 </div>
 
-{@render children()}
+<div class="container">
+  {@render children()}
+</div>
 
 <style>
-  .container {
+  .nav-container {
     display: flex;
     justify-content: space-between;
+    padding: var(--gap-tiny);
+    gap: var(--gap-small);
+    background-color: var(--fg-1);
+  }
+
+  nav {
+    display: flex;
+    gap: var(--gap-small);
+  }
+
+  nav a {
+    color: var(--bg-1);
+    display: flex;
+    align-items: center;
+  }
+
+  .container {
+    padding: var(--gap-small);
   }
 </style>
 

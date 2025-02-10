@@ -72,26 +72,29 @@
 
 <style>
   .pager {
-    margin: 1em 0;
+    margin: var(--gap-small) 0;
     display: flex;
     justify-content: center;
-    gap: 0.5em;
+    gap: var(--gap-tiny);
   }
 
   button {
-    padding: 0.5em;
-    border: 1px solid #ddd;
-    background-color: #f2f2f2;
+    padding: var(--gap-tiny);
+    border: none;
+    background-color: var(--bg-2);
     cursor: pointer;
+    font-size: .8em;
   }
 
   button:disabled {
+    color: var(--fg-3);
     cursor: not-allowed;
-    background-color: #ddd;
+    background-color: var(--bg-2);
   }
 
   button.active {
-    background-color: #ddd;
+    background-color: var(--bg-2);
+    font-weight: bold;
   }
 </style>
 

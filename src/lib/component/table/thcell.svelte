@@ -44,9 +44,9 @@
 
 <style>
   th {
-    border: 1px solid #ddd;
-    padding: 8px;
-    background-color: #f2f2f2;
+    border: 1px solid var(--border);
+    padding: var(--gap-tiny);
+    background-color: var(--bg-2);
   }
 
   .flexer {
@@ -65,11 +65,11 @@
   }
 
   i {
-    color: #ddd;
+    color: var(--fg-3);
   }
 
   div.active i {
-    color: #000;
+    color: var(--fg-1);
   }
 </style>
 

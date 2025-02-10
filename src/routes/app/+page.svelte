@@ -6,6 +6,16 @@
   let { data }: { data: GetProjectResp } = $props();
 </script>
 
-<Tasks />
-<Projects projects={data.projects} total={data.total} />
+<div class="container">
+  <Tasks />
+  <Projects projects={data.projects} total={data.total} />
+</div>
+
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+  }
+</style>
 

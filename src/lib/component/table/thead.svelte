@@ -26,11 +26,3 @@
   </tr>
 </thead>
 
-<style>
-  thead {
-    border: 1px solid #ddd;
-    padding: 8px;
-    background-color: #f2f2f2;
-  }
-</style>
-

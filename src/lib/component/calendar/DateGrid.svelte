@@ -10,7 +10,7 @@
 
 <div class="container">
   {#each events.slice(0, 3) as event}
-    <a class="event" href={event.links[0]?.url}>
+    <a class="event" class:done={event.done} href={event.links[0]?.url}>
       <span>
         {#if event.done}
           ✅
@@ -20,7 +20,7 @@
     </a>
   {/each}
   {#if events.length > 3}
-    <span>...</span>
+    <span class="more">{events.length - 3} more...</span>
   {/if}
 </div>
 
@@ -36,13 +36,17 @@
 
   .event {
     border-radius: var(--gap-small);
-    color: #000;
+    color: var(--fg-1);
     overflow: hidden;
     cursor: pointer;
     width: 100%;
     padding: 0;
     border: none;
-    background-color: rgba(255, 255, 255, 0);
+    text-decoration: none;
+  }
+
+  .event.done span {
+    text-decoration: line-through;
   }
 
   .event span {
@@ -53,6 +57,11 @@
     text-overflow: ellipsis;
     text-align: left;
     text-decoration: underline;
+  }
+
+  .more {
+    color: #666;
+    font-size: 0.8em;
   }
 </style>
 

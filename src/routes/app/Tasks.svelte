@@ -3,7 +3,7 @@
   import Calendar from "$lib/component/calendar/Calendar.svelte";
   import type { CalEvent } from "$lib/component/calendar/util";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
-    import { strToDate } from "$lib/util";
+  import { strToDate } from "$lib/util";
   import type { GetCalendarTasksResp } from "./task/util";
 
   let { initEvents } : { initEvents?: CalEvent[] } = $props();
@@ -46,6 +46,5 @@
   }
 </script>
 
-<h1>Calendar</h1>
 <Calendar {initEvents} {getEvents} />
 

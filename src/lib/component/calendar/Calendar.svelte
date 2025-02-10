@@ -138,20 +138,20 @@
   }
 
   .calendar {
-    color: rgb(66,66,66);
+    color: var(--fg-1);
     width: fit-content;
   }
 
   .calendar-header {
     display: flex;
     justify-content: space-between;
-    color: #fff;
+    color: var(--bg-1);
     padding-bottom: 0.5em;
   }
 
   .calendar-header button {
-    background-color: rgb(66,66,66);
-    color: #fff;
+    background-color: var(--fg-1);
+    color: var(--bg-1);
     border: none;
     padding: 0.5em 0.75em;
     border-radius: 0.5em;
@@ -186,7 +186,7 @@
   }
 
   .cell:not(:nth-of-type(7n)) {
-    border-right: 1px solid rgb(66,66,66);
+    border-right: 1px solid var(--fg-2);
   }
 
   .dates .cell:nth-last-of-type(-n+7) {
@@ -206,16 +206,16 @@
   }
 
   .today .dateLabel {
-    color: #fff;
-    background-color: rgb(66,66,66);
+    color: var(--bg-1);
+    background-color: var(--fg-1);
   }
 
   .foreign {
-    background-color: rgb(240, 240, 240);
+    background-color: var(--bg-2);
   }
 
   .focused {
-    background-color: #ccdbeb;
+    background-color: var(--bg-acc);
   }
 </style>
 

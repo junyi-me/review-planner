@@ -14,32 +14,51 @@
 <h2>{formatDateLocale(date)}</h2>
 
 {#if events.length === 0}
-  <p>No events</p>
+  <p class="nothing">Nothing for this day</p>
 {:else}
   <ul>
     {#each events as event}
-      <li>
-        {event.title}
+      <li class:done={event.done}>
+        <span>
+          {event.title}
+        </span>
         <div class="links">
           {#each event.links as entry}
-            <span>
-              <a href={entry.url}>{entry.label}</a>
-              <i class="fas fa-external-link-alt"></i>
-            </span>
+            <a href={entry.url}>{entry.label}</a>
           {/each}
         </div>
-        {#if event.done}
-          <span>✅</span>
-        {/if}
       </li>
     {/each}
   </ul>
 {/if}
 
 <style>
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--gap-small);
+    align-items: center;
+    padding: var(--gap-small) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  li.done span {
+    text-decoration: line-through;
+  }
+
   .links {
-    display: inline-flex;
-    gap: 0.5em;
+    display: flex;
+    gap: var(--gap-tiny);
+    flex-wrap: wrap;
+  }
+
+  .nothing {
+    color: var(--fg-2);
   }
 </style>
 

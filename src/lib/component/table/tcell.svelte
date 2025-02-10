@@ -15,25 +15,25 @@
 
 <style>
   td {
-      border: 1px solid #ddd;
-      padding: 8px;
+      border: 1px solid var(--border);
+      padding: var(--gap-tiny);
   }
 
   .nocontent {
-      color: #999;
+      color: var(--fg-3);
       text-align: center;
   }
 
   .warning {
-      background-color: #ffff99;
+      background-color: var(--bg-warn);
   }
 
   .danger {
-      background-color: #ff9999;
+      background-color: var(--bg-danger);
   }
 
   .success {
-      background-color: #ccff99;
+      background-color: var(--bg-success);
   }
 </style>
 
