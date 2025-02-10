@@ -67,37 +67,63 @@
   }
 </script>
 
-{#if !editing}
-  <h1>{project.name}</h1>
-  <a href={project.link} target="_blank">{project.link}</a>
-  <p>{project.description}</p>
+<div class="container">
+  {#if !editing}
+    <div class="header">
+      <h1>{project.name}</h1>
+      <div>
+        <button class="secondary" onclick={() => editing = true}>
+          <i class="fas fa-edit"></i>
+          Edit
+        </button>
+        <button class="danger" onclick={deleteProject}>
+          <i class="fas fa-trash"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+    <a href={project.link} target="_blank">{project.link}</a>
+    <p>{project.description}</p>
 
-  <div class="striped">
-    <Table {columns} dtProps={{ onPageChange: handleSort, total: taskCount, initPageOpts }}>
-      <tbody>
-        {#if tasks.length === 0}
+    <div class="striped">
+      <Table {columns} dtProps={{ onPageChange: handleSort, total: taskCount, initPageOpts }}>
+        <tbody>
+          {#if tasks.length === 0}
+            <Tr>
+              <Td colspan={99} class="nocontent">No tasks</Td>
+            </Tr>
+          {/if}
+          {#each tasks as _, i}
+            <Tr>
+              <Td>{i+1}</Td>
+              <TaskRow bind:task={tasks[i]} />
+            </Tr>
+          {/each}
           <Tr>
-            <Td colspan={99} class="nocontent">No tasks</Td>
+            <Td colspan={99}>
+              <button class="primary" onclick={() => goto(`/app/task/create?projId=${project.id}`)}>
+                <i class="fas fa-plus"></i>
+                Create new task
+              </button>
+            </Td>
           </Tr>
-        {/if}
-        {#each tasks as _, i}
-          <Tr>
-            <Td>{i+1}</Td>
-            <TaskRow bind:task={tasks[i]} />
-          </Tr>
-        {/each}
-      </tbody>
-    </Table>
-  </div>
-  <br />
+        </tbody>
+      </Table>
+    </div>
+  {:else}
+    <EditProject {project} onSave={() => location.reload()} onCancel={() => editing = false} />
+  {/if}
+</div>
 
-  <a href="/app/task/create?projId={project.id}">Create new task</a>
-  <br />
-  <br />
+<style>
+  .container {
+    padding-bottom: var(--gap-small);
+  }
 
-  <button onclick={() => editing = true}>Edit project</button>
-  <button onclick={deleteProject}>Delete</button>
-{:else}
-  <EditProject {project} onSave={() => location.reload()} onCancel={() => editing = false} />
-{/if}
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
 

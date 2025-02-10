@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { formatDateLocale } from "$lib/util";
   import type { CalEvent } from "./util";
 
@@ -24,7 +25,9 @@
         </span>
         <div class="links">
           {#each event.links as entry}
-            <a href={entry.url}>{entry.label}</a>
+            <button class="secondary" onclick={() => goto(entry.url)}>
+              {entry.label}
+            </button>
           {/each}
         </div>
       </li>

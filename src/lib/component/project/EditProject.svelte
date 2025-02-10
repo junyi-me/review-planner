@@ -89,28 +89,29 @@
                 onchange={e => handleOffsetDayChange(i, e)} />
             </Td>
             <Td>
-              <button type="button" onclick={() => project.offsetDays = project.offsetDays.filter((_, j) => j !== i)} aria-label="delete">
+              <button class="danger" type="button" onclick={() => project.offsetDays = project.offsetDays.filter((_, j) => j !== i)} aria-label="delete">
                 <i class="fas fa-trash"></i>
               </button>
             </Td>
           </Tr>
         {/each}
-        <tr>
-          <td colspan="99">
-            <button type="button" 
+        <Tr>
+          <Td colspan={99}>
+            <button type="button" class="primary"
               onclick={() => project.offsetDays = [...project.offsetDays, project.offsetDays[project.offsetDays.length-1] * 2]}
               disabled={project.offsetDays.length >= MAX_ITERATIONS - 1}>
+              <i class="fas fa-plus"></i>
               Add iteration
             </button>
-          </td>
-        </tr>
+          </Td>
+        </Tr>
       </tbody>
     </Table>
   </div>
   <br />
 
-  <button onclick={save} aria-label="save">Save</button>
-  <button onclick={() => { onCancel(); project = initProj; }} aria-label="cancel">Cancel</button>
+  <button class="primary" onclick={save} aria-label="save">Save</button>
+  <button class="secondary" onclick={() => { onCancel(); project = initProj; }} aria-label="cancel">Cancel</button>
 </div>
 
 <style>

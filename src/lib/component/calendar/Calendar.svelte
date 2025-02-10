@@ -147,7 +147,6 @@
     justify-content: space-between;
     color: var(--bg-1);
     background-color: var(--fg-1);
-    padding: var(--gap-tiny);
     align-items: center;
   }
 
@@ -157,6 +156,7 @@
     border: none;
     padding: var(--gap-tiny);
     cursor: pointer;
+    font-size: 1em;
   }
 
   .table { 

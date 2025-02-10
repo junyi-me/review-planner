@@ -83,7 +83,6 @@
     border: none;
     background-color: var(--bg-2);
     cursor: pointer;
-    font-size: .8em;
   }
 
   button:disabled {
@@ -93,7 +92,8 @@
   }
 
   button.active {
-    background-color: var(--bg-2);
+    background-color: var(--fg-1);
+    color: var(--bg-1);
     font-weight: bold;
   }
 </style>

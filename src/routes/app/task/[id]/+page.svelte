@@ -5,6 +5,7 @@
   import { Table, Td, Tr } from "$lib/component/table";
   import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
   import { setLoadingState } from "$lib/store/global.svelte";
+  import { formatStrDateLocale } from "$lib/util";
 
   type PageProps = {
     project: ProjectRow;
@@ -38,6 +39,11 @@
 </script>
 
 {#if !editing}
+  <a href="/app/project/{task.projectId}">
+    <i class="fas fa-arrow-left"></i>
+    Back to project
+  </a>
+
   <h1>{task.name}</h1>
   {#if !task.nextIterAt}
     <p>✅ {task.lastIterAt}</p>
@@ -59,7 +65,7 @@
         {#each task.iterations as iter, i}
           <Tr>
             <Td>{i+1}</Td>
-            <Td>{iter.plannedAt}</Td>
+            <Td>{formatStrDateLocale(iter.plannedAt)}</Td>
             <Td>{iter.done ? "✅" : "❌"}</Td>
           </Tr>
         {/each}
@@ -68,8 +74,14 @@
   </div>
 
   <br />
-  <button onclick={() => editing = true}>Edit</button>
-  <button onclick={deleteTask}>Delete</button>
+  <button class="secondary" onclick={() => editing = true}>
+    <i class="fas fa-edit"></i>
+    Edit
+  </button>
+  <button class="danger" onclick={deleteTask}>
+    <i class="fas fa-trash"></i>
+    Delete
+  </button>
 {:else}
   <EditTask {task} onSave={() => location.reload()} onCancel={() => editing = false} />
 {/if}

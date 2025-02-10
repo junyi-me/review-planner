@@ -77,7 +77,7 @@
     <textarea value={task.description} onchange={e => task.description = (e.target as HTMLTextAreaElement).value}></textarea>
   </div>
 
-  <div class="striped">
+  <div class="table">
     <Table columns={[
       { key: "iter", label: "Iteration" },
       { key: "plannedAt", label: "Planned at" },
@@ -105,7 +105,7 @@
                 disabled={!iter.canToggle} />
             </Td>
             <Td>
-              <button onclick={() => task.iterations.splice(i, 1)} aria-label="delete" disabled={i === 0}>
+              <button class="danger" onclick={() => task.iterations.splice(i, 1)} aria-label="delete" disabled={i === 0}>
                 <i class="fas fa-trash"></i>
               </button>
             </Td>
@@ -114,7 +114,10 @@
         <tr>
           {#if iterations.length < MAX_ITERATIONS}
             <Td colspan={99}>
-              <button onclick={addIteration} aria-label="add">Add iteration</button>
+              <button class="primary" onclick={addIteration} aria-label="add">
+                <i class="fas fa-plus"></i>
+                Add iteration
+              </button>
             </Td>
           {/if}
         </tr>
@@ -122,27 +125,27 @@
     </Table>
   </div>
 
-  <button onclick={save} aria-label="save">Save</button>
-  <button onclick={() => { onCancel(); task = initTask; }} aria-label="cancel">Cancel</button>
+  <button class="primary" onclick={save} aria-label="save">Save</button>
+  <button class="secondary" onclick={() => { onCancel(); task = initTask; }} aria-label="cancel">Cancel</button>
 </div>
 
 <style>
-  .container {
-    padding-top: 1em;
-  }
-
   .title {
     font-size: 1.5em;
     font-weight: bold;
   }
 
   .inputs input, textarea {
-    margin-bottom: 1em;
+    margin-bottom: var(--gap-small);
     width: 100%;
   }
 
   textarea {
     height: 10em;
+  }
+
+  .table {
+    margin-bottom: var(--gap-small);
   }
 </style>
 

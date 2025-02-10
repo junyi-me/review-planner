@@ -62,7 +62,7 @@
   <Loading fullScreen={true} />
 {/if}
 
-<Td status={task.nextIterAt ? "normal" : "success"}>
+<Td>
   <a href="/app/task/{task.id}/">{task.name}</a>
   {#if task.link}
     <a href={task.link} target="_blank" aria-label="external">
@@ -99,11 +99,16 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
+    padding: 0.25em 0.5em;
   }
 
   button.done {
     background-color: green !important;
     color: white;
+  }
+
+  button:not(.done) {
+    border: 1px solid rgba(0, 0, 0, 0.2);
   }
 </style>
 

@@ -45,7 +45,6 @@
 <style>
   th {
     border: 1px solid var(--border);
-    padding: var(--gap-tiny);
     background-color: var(--fg-1);
     color: var(--bg-1);
   }
