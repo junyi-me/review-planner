@@ -46,7 +46,8 @@
   th {
     border: 1px solid var(--border);
     padding: var(--gap-tiny);
-    background-color: var(--bg-2);
+    background-color: var(--fg-1);
+    color: var(--bg-1);
   }
 
   .flexer {
@@ -58,6 +59,7 @@
     border: none;
     cursor: pointer;
     font-size: 1em;
+    color: var(--bg-1);
   }
 
   .flexer.unsortable {
@@ -65,11 +67,11 @@
   }
 
   i {
-    color: var(--fg-3);
+    color: var(--fg-2);
   }
 
   div.active i {
-    color: var(--fg-1);
+    color: var(--fg-acc);
   }
 </style>
 

@@ -30,25 +30,61 @@
   }
 </script>
 
-<h1>Sign up</h1>
-<form on:submit={handleSubmit}>
-  <label for="email">Email</label>
-  <input type="email" id="email" name="email" required />
-  <br />
+<div class="container">
+  <form onsubmit={handleSubmit}>
+    <h1>Sign up</h1>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required />
+    <br />
 
-  <label for="nickname">Nickname</label>
-  <input type="text" id="nickname" name="nickname" required />
-  <br />
+    <label for="nickname">Nickname</label>
+    <input type="text" id="nickname" name="nickname" required />
+    <br />
 
-  <label for="password">Password</label>
-  <input type="password" id="password" name="password" required />
-  <br />
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required />
+    <br />
 
-  <label for="confirmPassword">Confirm Password</label>
-  <input type="password" id="confirmPassword" name="confirmPassword" required />
-  <br />
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required />
+    <br />
 
-  <button type="submit">Sign up</button>
-  <a href={postRegistUrl}>Login</a>
-</form>
+    <button class="primary" type="submit">Sign up</button>
+    <button class="secondary" type="button" onclick={() => goto(postRegistUrl)}>Login</button>
+  </form>
+</div>
+
+<style>
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+    min-width: 300px;
+    margin-top: -10em;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  input {
+    padding: var(--gap-tiny);
+    border: 1px solid var(--border);
+    border-radius: var(--gap-tiny);
+  }
+
+  button {
+    padding: var(--gap-tiny) var(--gap-small);
+    border: none;
+    border-radius: var(--gap-tiny);
+    cursor: pointer;
+  }
+</style>
 

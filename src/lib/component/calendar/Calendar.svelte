@@ -134,7 +134,7 @@
 <style>
   .container {
     display: flex;
-    gap: 1em;
+    gap: var(--gap-small);
   }
 
   .calendar {
@@ -146,15 +146,16 @@
     display: flex;
     justify-content: space-between;
     color: var(--bg-1);
-    padding-bottom: 0.5em;
+    background-color: var(--fg-1);
+    padding: var(--gap-tiny);
+    align-items: center;
   }
 
   .calendar-header button {
-    background-color: var(--fg-1);
-    color: var(--bg-1);
+    background-color: transparent;
+    color: var(--acc);
     border: none;
-    padding: 0.5em 0.75em;
-    border-radius: 0.5em;
+    padding: var(--gap-tiny);
     cursor: pointer;
   }
 
@@ -169,7 +170,7 @@
     height: auto;
     width: 8em;
     height: 8em;
-    border-bottom: 1px solid rgb(66,66,66);
+    border-bottom: 1px solid var(--border);
     padding: 0.5em;
   }
 
@@ -183,14 +184,11 @@
 
   .cell:nth-of-type(7n+1) {
     color: rgb(168, 126, 139);
+    border-left: 1px solid var(--border);
   }
 
-  .cell:not(:nth-of-type(7n)) {
-    border-right: 1px solid var(--fg-2);
-  }
-
-  .dates .cell:nth-last-of-type(-n+7) {
-    border-bottom: none;
+  .cell {
+    border-right: 1px solid var(--border);
   }
 
   .weekend {

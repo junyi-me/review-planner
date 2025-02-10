@@ -19,30 +19,38 @@
   <Loading fullScreen />
 {/if}
 
-<div class="nav-container">
-  <nav>
-    <img src="/favicon.webp" alt="logo" width="32" height="32" />
-    {#if $loggedIn}
-      <a href="/app">Dashboard</a>
-    {:else}
-      <a href="/">Top</a>
-    {/if}
-  </nav>
-
-  <nav>
-    {#if $loggedIn}
-      <a href="/auth/logout" data-sveltekit-preload-data="off">Logout</a>
-    {:else}
-      <a href="/auth/login">Login</a>
-    {/if}
-  </nav>
-</div>
-
 <div class="container">
-  {@render children()}
+  <div class="nav-container">
+    <nav>
+      <img src="/favicon.webp" alt="logo" width="32" height="32" />
+      {#if $loggedIn}
+        <a href="/app">Dashboard</a>
+      {:else}
+        <a href="/">Top</a>
+      {/if}
+    </nav>
+
+    <nav>
+      {#if $loggedIn}
+        <a href="/auth/logout" data-sveltekit-preload-data="off">Logout</a>
+      {:else}
+        <a href="/auth/login">Login</a>
+      {/if}
+    </nav>
+  </div>
+
+  <div class="page-content">
+    {@render children()}
+  </div>
 </div>
 
 <style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
   .nav-container {
     display: flex;
     justify-content: space-between;
@@ -62,8 +70,9 @@
     align-items: center;
   }
 
-  .container {
+  .page-content {
     padding: var(--gap-small);
+    height: 100%;
   }
 </style>
 

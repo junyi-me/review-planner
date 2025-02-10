@@ -1,6 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
 }
 
 body {
@@ -49,5 +50,38 @@ body {
 
 h1:nth-child(1) {
     margin-top: 0;
+}
+
+button {
+    cursor: pointer;
+    padding: var(--gap-tiny);
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    border: none;
+}
+
+button.primary {
+    background-color: var(--fg-1);
+    color: var(--bg-1);
+    border: 1px solid var(--fg-1);
+}
+
+button.primary:active {
+    background-color: var(--bg-1);
+}
+
+button.primary:disabled {
+    background-color: var(--bg-2);
+    color: var(--fg-2);
+}
+
+button.secondary {
+    background-color: var(--bg-2);
+    color: var(--fg-1);
+    border: 1px solid var(--border);
+}
+
+button.secondary:active {
+    background-color: var(--bg-2);
 }
 
