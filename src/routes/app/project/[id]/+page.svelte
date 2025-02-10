@@ -2,6 +2,9 @@
   import { goto } from '$app/navigation';
   import { getPgParams, type PageOpts } from '$lib/api';
   import { obtain } from '$lib/api.client';
+    import AddButton from '$lib/component/button/AddButton.svelte';
+  import DeleteButton from '$lib/component/button/DeleteButton.svelte';
+  import EditButton from '$lib/component/button/EditButton.svelte';
   import EditProject from '$lib/component/project/EditProject.svelte';
   import { Table, Td, Tr } from '$lib/component/table';
   import { DEFAULT_PAGE_SIZE } from '$lib/const';
@@ -72,14 +75,8 @@
     <div class="header">
       <h1>{project.name}</h1>
       <div>
-        <button class="secondary" onclick={() => editing = true}>
-          <i class="fas fa-edit"></i>
-          Edit
-        </button>
-        <button class="danger" onclick={deleteProject}>
-          <i class="fas fa-trash"></i>
-          Delete
-        </button>
+        <EditButton onClick={() => editing = true} label="Edit" />
+        <DeleteButton onClick={deleteProject} label="Delete" />
       </div>
     </div>
     <a href={project.link} target="_blank">{project.link}</a>
@@ -101,10 +98,7 @@
           {/each}
           <Tr>
             <Td colspan={99}>
-              <button class="primary" onclick={() => goto(`/app/task/create?projId=${project.id}`)}>
-                <i class="fas fa-plus"></i>
-                Create new task
-              </button>
+              <AddButton onClick={() => goto(`/app/task/create?projId=${project.id}`)} label="Create new task" />
             </Td>
           </Tr>
         </tbody>

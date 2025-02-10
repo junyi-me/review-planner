@@ -4,6 +4,8 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { getLinkFromClipboard } from "$lib/util";
+  import AddButton from "../button/AddButton.svelte";
+  import DeleteButton from "../button/DeleteButton.svelte";
   import { Table, Td, Tr } from "../table";
 
   let { project: initProj, onSave, onCancel }: {
@@ -89,20 +91,14 @@
                 onchange={e => handleOffsetDayChange(i, e)} />
             </Td>
             <Td>
-              <button class="danger" type="button" onclick={() => project.offsetDays = project.offsetDays.filter((_, j) => j !== i)} aria-label="delete">
-                <i class="fas fa-trash"></i>
-              </button>
+              <DeleteButton onClick={() => project.offsetDays = project.offsetDays.filter((_, j) => j !== i)} />
             </Td>
           </Tr>
         {/each}
         <Tr>
           <Td colspan={99}>
-            <button type="button" class="primary"
-              onclick={() => project.offsetDays = [...project.offsetDays, project.offsetDays[project.offsetDays.length-1] * 2]}
-              disabled={project.offsetDays.length >= MAX_ITERATIONS - 1}>
-              <i class="fas fa-plus"></i>
-              Add iteration
-            </button>
+            <AddButton label="Add iteration" onClick={() => project.offsetDays = [...project.offsetDays, 0]}
+              disabled={project.offsetDays.length >= MAX_ITERATIONS - 1} />
           </Td>
         </Tr>
       </tbody>

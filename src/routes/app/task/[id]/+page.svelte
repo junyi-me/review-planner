@@ -1,6 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { obtain } from "$lib/api.client";
+  import DeleteButton from "$lib/component/button/DeleteButton.svelte";
+  import EditButton from "$lib/component/button/EditButton.svelte";
   import EditTask from "$lib/component/project/EditTask.svelte";
   import { Table, Td, Tr } from "$lib/component/table";
   import type { ProjectRow, TaskRow } from "$lib/server/db/schema";
@@ -74,14 +76,8 @@
   </div>
 
   <br />
-  <button class="secondary" onclick={() => editing = true}>
-    <i class="fas fa-edit"></i>
-    Edit
-  </button>
-  <button class="danger" onclick={deleteTask}>
-    <i class="fas fa-trash"></i>
-    Delete
-  </button>
+  <EditButton onClick={() => editing = true} label="Edit" />
+  <DeleteButton onClick={deleteTask} label="Delete" />
 {:else}
   <EditTask {task} onSave={() => location.reload()} onCancel={() => editing = false} />
 {/if}

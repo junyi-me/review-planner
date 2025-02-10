@@ -5,6 +5,8 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
+    import AddButton from "../button/AddButton.svelte";
+  import DeleteButton from "../button/DeleteButton.svelte";
   import { Table, Td, Tr } from "../table";
   import { convertIters, updateIterPlannedAt } from "./componentUtil";
 
@@ -105,19 +107,14 @@
                 disabled={!iter.canToggle} />
             </Td>
             <Td>
-              <button class="danger" onclick={() => task.iterations.splice(i, 1)} aria-label="delete" disabled={i === 0}>
-                <i class="fas fa-trash"></i>
-              </button>
+              <DeleteButton onClick={() => task.iterations.splice(i, 1)} />
             </Td>
           </Tr>
         {/each}
         <tr>
           {#if iterations.length < MAX_ITERATIONS}
             <Td colspan={99}>
-              <button class="primary" onclick={addIteration} aria-label="add">
-                <i class="fas fa-plus"></i>
-                Add iteration
-              </button>
+              <AddButton label="Add iteration" onClick={addIteration} />
             </Td>
           {/if}
         </tr>
