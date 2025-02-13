@@ -1,4 +1,5 @@
 import { goto } from "$app/navigation";
+import { setLoadingState, setToastState } from "./store/global.svelte";
 
 async function refreshToken() {
   const response = await fetch("/auth/refresh", { method: "POST" });
@@ -7,7 +8,6 @@ async function refreshToken() {
   }
   return false;
 };
-
 
 export async function obtain(url?: string, options: RequestInit = {}) {
   if (!url) {
@@ -41,5 +41,23 @@ export async function obtain(url?: string, options: RequestInit = {}) {
   }
 
   return response;
+}
+
+export async function setIterDone(taskId: number, iterIdx: number, done: boolean) {
+  setLoadingState(true);
+
+  const resp = await obtain(`/app/task/${taskId}/iteration/${iterIdx}`, {
+    method: "PATCH",
+    body: JSON.stringify({ done }),
+  });
+
+  setLoadingState(false);
+  if (resp.ok) {
+    return;
+  }
+
+  console.error("Failed to update", resp);
+  setToastState({ type: "error", message: "Failed to update" });
+  throw new Error("Failed to update");
 }
 

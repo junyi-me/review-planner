@@ -4,6 +4,7 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { getLinkFromClipboard } from "$lib/util";
+  import { onMount } from "svelte";
   import AddButton from "../button/AddButton.svelte";
   import DeleteButton from "../button/DeleteButton.svelte";
   import { Table, Td, Tr } from "../table";
@@ -56,11 +57,14 @@
     setLoadingState(false);
     onSave(project.id!);
   }
+
+  let titleEle: HTMLInputElement|null = null;
+  onMount(() => titleEle && titleEle.focus());
 </script>
 
 <div class="container">
   <div class="inputs">
-    <input class="title" type="text" value={project.name} onpaste={handleTitlePaste} oninput={e => project.name = (e.target as HTMLInputElement).value} />
+    <input class="title" type="text" bind:this={titleEle} value={project.name} onpaste={handleTitlePaste} oninput={e => project.name = (e.target as HTMLInputElement).value} />
     <br />
     <input type="text" bind:value={project.link} />
     <br />

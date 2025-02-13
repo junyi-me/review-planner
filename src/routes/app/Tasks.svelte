@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { obtain } from "$lib/api.client";
+  import { obtain, setIterDone } from "$lib/api.client";
   import Calendar from "$lib/component/calendar/Calendar.svelte";
   import type { CalEvent } from "$lib/component/calendar/util";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
@@ -28,19 +28,24 @@
     const events: CalEvent[] = [];
     data.tasks.forEach(entry => {
       const { task, projectId } = entry;
-      task.iterations.forEach(iter => {
-        events.push({
+      task.iterations.forEach((iter, iterIdx) => {
+        const e: CalEvent = {
           title: task.name,
           date: strToDate(iter.plannedAt),
           done: iter.done,
           links: [
             { url: `/app/task/${task.id}`, label: "Details" },
             { url: `/app/project/${projectId}`, label: "Project" },
-          ]
-        });
+          ],
+          toggleDone: async () => setIterDone(task.id, iterIdx, !iter.done),
+          iteration: iterIdx,
+        }
+        if (task.link) {
+          e.links.push({ url: task.link, label: "", external: true });
+        }
+        events.push(e);
       });
     });
-    console.log(events)
 
     return events;
   }

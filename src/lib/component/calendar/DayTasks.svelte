@@ -19,21 +19,53 @@
 {:else}
   <ul>
     {#each events as event}
-      <li class:done={event.done}>
-        <span>
-          {event.title}
-        </span>
+      <li>
+        <div>
+          <button class="toggler" onclick={() => {
+            event.done = !event.done;
+            event.toggleDone();
+          }}>
+            {#if event.done}
+              ✅
+            {:else}
+              <i class="fa-regular fa-square"></i>
+            {/if}
+          </button>
+          <span class:done={event.done}>
+            {event.title}
+          </span>
+          <span class="iter">
+            {event.iteration + 1}
+          </span>
+        </div>
         <div class="links">
-          {#each event.links as entry}
-            <button class="secondary" onclick={() => goto(entry.url)}>
-              {entry.label}
-            </button>
+          {#if event.links}
+            {@render linkButton(event.links[0].url, event.links[0].label, true)}
+          {/if}
+          {#each event.links.slice(1) as entry}
+            {@render linkButton(entry.url, entry.label, false, entry.external)}
           {/each}
         </div>
       </li>
     {/each}
   </ul>
 {/if}
+
+{#snippet linkButton(link: string, label: string, primary: boolean, external?: boolean)}
+  <button class:primary={primary} class:secondary={!primary} onclick={() => {
+    if (external) {
+      window.open(link, "_blank");
+    } else {
+      goto(link);
+    }
+  }}>
+    {#if external && !label}
+      <i class="fas fa-external-link-alt"></i>
+    {:else}
+      {label}
+    {/if}
+  </button>
+{/snippet}
 
 <style>
   ul {
@@ -50,7 +82,7 @@
     border-bottom: 1px solid var(--border);
   }
 
-  li.done span {
+  .done {
     text-decoration: line-through;
   }
 
@@ -62,6 +94,25 @@
 
   .nothing {
     color: var(--fg-2);
+  }
+
+  .toggler {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+    padding-right: 0;
+  }
+
+  .iter {
+    background-color: var(--fg-1);
+    color: var(--bg-1);
+    border-radius: 50%;
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
 

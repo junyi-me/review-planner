@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { obtain } from "$lib/api.client";
+  import { obtain, setIterDone } from "$lib/api.client";
   import DeleteButton from "$lib/component/button/DeleteButton.svelte";
   import EditButton from "$lib/component/button/EditButton.svelte";
   import EditTask from "$lib/component/project/EditTask.svelte";
@@ -15,7 +15,7 @@
   };
 
   let { data }: { data: PageProps } = $props();
-  let { task } = data;
+  let task = $state(data.task);
 
   let editing = $state(false);
 
@@ -68,7 +68,18 @@
           <Tr>
             <Td>{i+1}</Td>
             <Td>{formatStrDateLocale(iter.plannedAt)}</Td>
-            <Td>{iter.done ? "✅" : "❌"}</Td>
+            <Td>
+              <button class="toggler" onclick={() => {
+                setIterDone(task.id, i, !iter.done);
+                iter.done = !iter.done;
+              }}>
+                {#if iter.done}
+                  ✅
+                {:else}
+                  <i class="fa-regular fa-square"></i>
+                {/if}
+              </button>
+            </Td>
           </Tr>
         {/each}
       </tbody>
@@ -81,4 +92,14 @@
 {:else}
   <EditTask {task} onSave={() => location.reload()} onCancel={() => editing = false} />
 {/if}
+
+<style>
+  .toggler {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+    padding-right: 0;
+  }
+</style>
 

@@ -15,7 +15,7 @@
   .container {
     display: flex;
     flex-direction: column;
-    gap: var(--gap-medium);
+    gap: var(--gap-small);
   }
 </style>
 

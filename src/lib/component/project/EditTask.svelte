@@ -5,7 +5,8 @@
   import { MAX_ITERATIONS } from "$lib/const";
   import { loadingState, setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { addOffsetToDate, getDateDiff, getLinkFromClipboard } from "$lib/util";
-    import AddButton from "../button/AddButton.svelte";
+  import { onMount } from "svelte";
+  import AddButton from "../button/AddButton.svelte";
   import DeleteButton from "../button/DeleteButton.svelte";
   import { Table, Td, Tr } from "../table";
   import { convertIters, updateIterPlannedAt } from "./componentUtil";
@@ -64,6 +65,9 @@
     onSave();
     setLoadingState(false);
   }
+
+  let titleEle: HTMLInputElement|null = null;
+  onMount(() => titleEle && titleEle.focus());
 </script>
 
 {#if loadingState.loading}
@@ -72,7 +76,7 @@
 
 <div class="container">
   <div class="inputs">
-    <input class="title" type="text" value={task.name} onpaste={handleTitlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
+    <input class="title" type="text" bind:this={titleEle} value={task.name} onpaste={handleTitlePaste} oninput={e => task.name = (e.target as HTMLInputElement).value} />
     <br />
     <input type="text" bind:value={task.link} />
     <br />

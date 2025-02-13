@@ -14,6 +14,8 @@
       <span>
         {#if event.done}
           ✅
+        {:else if event.date < new Date()}
+          <i class="fas fa-exclamation-triangle"></i>
         {/if}
         {event.title}
       </span>
@@ -62,6 +64,10 @@
   .more {
     color: #666;
     font-size: 0.8em;
+  }
+
+  .fa-exclamation-triangle {
+    color: #FFB200;
   }
 </style>
 

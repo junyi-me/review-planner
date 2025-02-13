@@ -83,6 +83,10 @@
     border: none;
     background-color: var(--bg-2);
     cursor: pointer;
+    min-width: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   button:disabled {

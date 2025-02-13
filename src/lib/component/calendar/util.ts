@@ -1,8 +1,10 @@
 export type CalEvent = {
   title: string;
   date: Date;
-  links: { label: string, url: string }[];
+  links: { label: string, url: string, external?: boolean }[];
   done: boolean;
+  toggleDone: () => void;
+  iteration: number;
 }
 
 /**

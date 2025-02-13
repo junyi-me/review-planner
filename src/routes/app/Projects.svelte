@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { getPgParams, type PageOpts, type ProjectMinIter } from "$lib/api";
   import { obtain } from "$lib/api.client";
+  import AddButton from "$lib/component/button/AddButton.svelte";
   import DateCell from "$lib/component/DateCell.svelte";
   import { Td, Tr } from "$lib/component/table";
   import Table from "$lib/component/table/table.svelte";
@@ -69,9 +71,11 @@
         <Td>{formatDateLocale(pt.project.createdAt)}</Td>
       </Tr>
     {/each}
+    <Tr>
+      <Td colspan={99}>
+        <AddButton onClick={() => goto("/app/project/create")} label="Create project" />
+      </Td>
+    </Tr>
   </tbody>
 </Table>
-<br />
-
-<a href="/app/project/create">Create project</a>
 
