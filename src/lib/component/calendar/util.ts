@@ -1,4 +1,5 @@
 export type CalEvent = {
+  id: string;
   title: string;
   date: Date;
   links: { label: string, url: string, external?: boolean }[];

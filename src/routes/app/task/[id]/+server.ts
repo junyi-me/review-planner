@@ -1,14 +1,10 @@
-import { project, task } from "$lib/server/db/schema";
-import { and, eq } from 'drizzle-orm';
+import { task } from "$lib/server/db/schema";
+import { eq } from 'drizzle-orm';
 import type { RequestEvent } from "./$types";
 import { getTokenPayload } from "$lib/server/util";
 import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
 import { db } from "$lib/server/db";
-
-async function getTaskForUser(taskId: number, userId: number) {
-  return await db.select().from(task).where(eq(task.id, taskId))
-    .leftJoin(project, and(eq(task.projectId, project.id), eq(project.ownerId, userId)));
-}
+import { getTaskForUser } from "$lib/server/db/query";
 
 export async function PUT({ params, locals, request }: RequestEvent) {
   const taskId = parseInt(params.id);

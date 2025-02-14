@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import { getPgParams, type PageOpts } from '$lib/api';
   import { obtain } from '$lib/api.client';
-    import AddButton from '$lib/component/button/AddButton.svelte';
+  import AddButton from '$lib/component/button/AddButton.svelte';
   import DeleteButton from '$lib/component/button/DeleteButton.svelte';
   import EditButton from '$lib/component/button/EditButton.svelte';
   import EditProject from '$lib/component/project/EditProject.svelte';

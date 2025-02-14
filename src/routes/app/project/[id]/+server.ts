@@ -54,7 +54,7 @@ export async function DELETE({ params, locals }: RequestEvent) {
     return new Response(null, { status: 404 });
   }
 
-  db.transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     await tx.delete(task).where(eq(task.projectId, projId));
     await tx.delete(project).where(eq(project.id, projId));
   });

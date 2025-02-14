@@ -5,10 +5,20 @@
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { strToDate } from "$lib/util";
   import type { GetCalendarTasksResp } from "./task/util";
+  import { setReloadProjState } from "./util.svelte";
 
-  let { initEvents } : { initEvents?: CalEvent[] } = $props();
+  let firstDate = $state<Date>();
+  let lastDate = $state<Date>();
+  let events: CalEvent[] = $state([]);
+  $effect(() => {
+    if (firstDate && lastDate) {
+      updateEvents(firstDate, lastDate).then(e => {
+        events = e;
+      });
+    }
+  });
 
-  async function getEvents(from: Date, to: Date): Promise<CalEvent[]> {
+  async function updateEvents(from: Date, to: Date): Promise<CalEvent[]> {
     setLoadingState(true);
     const resp = await obtain("/app/task", {
       method: "POST",
@@ -25,11 +35,12 @@
     const data = await resp.json() as GetCalendarTasksResp;
     setLoadingState(false);
 
-    const events: CalEvent[] = [];
-    data.tasks.forEach(entry => {
+    const calEvents: CalEvent[] = [];
+    data.tasks.forEach((entry, entryIdx) => {
       const { task, projectId } = entry;
       task.iterations.forEach((iter, iterIdx) => {
         const e: CalEvent = {
+          id: `${entryIdx}-${iterIdx}`,
           title: task.name,
           date: strToDate(iter.plannedAt),
           done: iter.done,
@@ -37,19 +48,29 @@
             { url: `/app/task/${task.id}`, label: "Details" },
             { url: `/app/project/${projectId}`, label: "Project" },
           ],
-          toggleDone: async () => setIterDone(task.id, iterIdx, !iter.done),
+          toggleDone: async () => {
+            await setIterDone(task.id, iterIdx, !iter.done)
+            iter.done = !iter.done; // for consecutive toggling
+            events = events.map(ev => {
+              if (ev.id === e.id) {
+                ev.done = !ev.done;
+              }
+              return ev;
+            });
+            setReloadProjState(true);
+          },
           iteration: iterIdx,
         }
         if (task.link) {
           e.links.push({ url: task.link, label: "", external: true });
         }
-        events.push(e);
+        calEvents.push(e);
       });
     });
 
-    return events;
+    return calEvents;
   }
 </script>
 
-<Calendar {initEvents} {getEvents} />
+<Calendar bind:firstDate bind:lastDate {events} />
 

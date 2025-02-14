@@ -5,13 +5,15 @@
   import { getCalendarEdgeDays, type CalEvent } from "./util";
 
   let { 
-    initEvents, 
-    getEvents,
+    firstDate = $bindable(),
+    lastDate = $bindable(),
+    events,
   } : {
-    initEvents?: CalEvent[];
-    getEvents?: (from: Date, to: Date) => Promise<CalEvent[]>;
+    firstDate?: Date;
+    lastDate?: Date;
+    events: CalEvent[];
   } = $props();
-
+  
   const today = new Date();
 
   let current = $state(today);
@@ -51,8 +53,10 @@
     ];
   }
   let dates = $derived.by(getVisibleDays);
-  let firstDate = $derived(dates[0]);
-  let lastDate = $derived(dates[dates.length - 1]);
+  $effect(() => {
+    firstDate = dates[0];
+    lastDate = dates[dates.length - 1];
+  });
 
   function updateFocus() {
     if (today.getMonth() === month && today.getFullYear() === year) {
@@ -76,16 +80,6 @@
     current = today;
     updateFocus();
   }
-
-  let events = $state(initEvents ?? []);
-  $effect(() => {
-    if (getEvents) {
-      getEvents(firstDate, lastDate).then((newEvents) => {
-        events = newEvents;
-      });
-    }
-  });
-  let focusEvents = $derived(events.filter(e => isSameDate(e.date, focus)));
 </script>
 
 <div class="container">
@@ -113,13 +107,20 @@
         {#each dates as date}
           <div class="cell" 
             class:today={date && isSameDate(date, today)}
-            class:focused={date && isSameDate(date, focus)}
             class:foreign={date?.getMonth() !== month}
             onclick={() => focus = date} role="button" onkeydown={() => {}} tabindex={0}>
             <div class="dateLabel">
               {date?.getDate() ?? ""}
             </div>
             <DateGrid events={events.filter(e => isSameDate(e.date, date))} />
+            {#if date && isSameDate(date, focus)}
+              <div class="focusIndicator">
+                <div class="focusEdge"></div>
+                <div class="focusEdge"></div>
+                <div class="focusEdge"></div>
+                <div class="focusEdge"></div>
+              </div>
+            {/if}
           </div>
         {/each}
       </div>
@@ -127,7 +128,7 @@
   </div>
 
   <div>
-    <DayTasks date={focus} events={focusEvents} />
+    <DayTasks date={focus} events={events.filter(e => isSameDate(e.date, focus))} />
   </div>
 </div>
 
@@ -168,14 +169,14 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    width: 8em;
-    height: 8em;
+    width: 9em;
+    height: 9em;
     border-bottom: 1px solid var(--border);
     padding: 0.5em;
   }
 
   .head .cell {
-    height: 1.5em;
+    height: 2em;
   }
 
   .cell:nth-of-type(7n) {
@@ -189,6 +190,8 @@
 
   .cell {
     border-right: 1px solid var(--border);
+    position: relative;
+    box-sizing: border-box;
   }
 
   .weekend {
@@ -212,8 +215,32 @@
     background-color: var(--bg-2);
   }
 
-  .focused {
-    background-color: var(--bg-acc);
+  .focusIndicator {
+    position: absolute;
+    top: 0em;
+    left: 0em;
+    right: 0em;
+    bottom: 0em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 50%;
+  }
+
+  .focusEdge:nth-of-type(1), .focusEdge:nth-of-type(2) {
+    border-top: 4px solid var(--fg-acc);
+  }
+
+  .focusEdge:nth-of-type(3), .focusEdge:nth-of-type(4) {
+    border-bottom: 4px solid var(--fg-acc);
+  }
+
+  .focusEdge:nth-of-type(1), .focusEdge:nth-of-type(3) {
+    border-left: 4px solid var(--fg-acc);
+  }
+
+  .focusEdge:nth-of-type(2), .focusEdge:nth-of-type(4) {
+    border-right: 4px solid var(--fg-acc);
   }
 </style>
 

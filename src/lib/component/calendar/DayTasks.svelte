@@ -22,7 +22,6 @@
       <li>
         <div>
           <button class="toggler" onclick={() => {
-            event.done = !event.done;
             event.toggleDone();
           }}>
             {#if event.done}

@@ -10,6 +10,7 @@
   import { DEFAULT_PAGE_SIZE, MIN_NEXT_ITER_AT } from "$lib/const";
   import { setLoadingState, setToastState } from "$lib/store/global.svelte";
   import { formatDateLocale } from "$lib/util";
+  import { reloadProjState, setReloadProjState } from "./util.svelte";
 
   let { projects, total }: { projects: ProjectMinIter[], total: number } = $props();
   let projectTasks = $state(projects);
@@ -30,8 +31,10 @@
     search: null, // TODO
   };
 
+  let pageOpts = $state(initPageOpts);
   async function handleSearch(pgOpts: PageOpts) {
     setLoadingState(true);
+    pageOpts = pgOpts;
 
     const resp = await obtain(`/app?${getPgParams(pgOpts)}`);
 
@@ -46,6 +49,13 @@
     projectTasks = data.projects;
     setLoadingState(false);
   }
+
+  $effect(() => {
+    if (reloadProjState.loading) {
+      handleSearch(pageOpts);
+      setReloadProjState(false);
+    }
+  });
 </script>
 
 <Table {columns} dtProps={{ onPageChange: handleSearch, total, initPageOpts }}>
