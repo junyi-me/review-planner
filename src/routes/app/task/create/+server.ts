@@ -21,6 +21,7 @@ export async function POST({ locals, request }: RequestEvent) {
   }
 
   const firstIterAt = pTask.iterations[0].plannedAt;
+  const nextIterAt = pTask.iterations.find(iter => !iter.done)?.plannedAt ?? null;
   const newTasks = await db.insert(task).values({
     projectId: pTask.projectId,
     name: pTask.name,
@@ -28,7 +29,7 @@ export async function POST({ locals, request }: RequestEvent) {
     link: pTask.link,
     iterations: pTask.iterations,
     firstIterAt,
-    nextIterAt: firstIterAt,
+    nextIterAt,
     lastIterAt: pTask.iterations[pTask.iterations.length - 1].plannedAt,
   }).returning({ id: task.id });
   if (newTasks.length !== 1) {
