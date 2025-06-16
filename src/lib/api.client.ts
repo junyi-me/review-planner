@@ -1,13 +1,4 @@
-import { goto } from "$app/navigation";
 import { setLoadingState, setToastState } from "./store/global.svelte";
-
-async function refreshToken() {
-  const response = await fetch("/auth/refresh", { method: "POST" });
-  if (response.ok) {
-    return true;
-  }
-  return false;
-};
 
 export async function obtain(url?: string, options: RequestInit = {}) {
   if (!url) {
@@ -27,20 +18,7 @@ export async function obtain(url?: string, options: RequestInit = {}) {
     },
   };
 
-  const response = await fetch(url, newOpts);
-
-  if (response.status === 401) {
-    const refreshed = await refreshToken();
-    if (refreshed) {
-      // Retry the original request
-      return fetch(url, newOpts);
-    } else {
-      // If refresh fails, redirect to logout
-      goto('/auth/logout');
-    }
-  }
-
-  return response;
+  return await fetch(url, newOpts);
 }
 
 export async function setIterDone(taskId: number, iterIdx: number, done: boolean) {
