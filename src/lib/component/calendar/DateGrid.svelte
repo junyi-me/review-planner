@@ -6,10 +6,12 @@
   } : {
     events?: CalEvent[];
   } = $props();
+
+  let sortedEvents = $derived(events.slice().sort((a, b) => a.done === b.done ? 0 : a.done ? 1 : -1));
 </script>
 
 <div class="container">
-  {#each events.slice(0, 3) as event}
+  {#each sortedEvents.slice(0, 3) as event}
     <a class="event" class:done={event.done} href={event.links[0]?.url}>
       <span>
         {#if event.done}

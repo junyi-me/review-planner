@@ -3,10 +3,7 @@
   import { formatDateLocale } from "$lib/util";
   import type { CalEvent } from "./util";
 
-  let { 
-    date, 
-    events,
-  } : {
+  let { date, events, } : {
     date: Date,
     events: CalEvent[],
   } = $props();
@@ -18,34 +15,11 @@
   <p class="nothing">Nothing for this day</p>
 {:else}
   <ul>
-    {#each events as event}
-      <li>
-        <div>
-          <button class="toggler" onclick={() => {
-            event.toggleDone();
-          }}>
-            {#if event.done}
-              ✅
-            {:else}
-              <i class="fa-regular fa-square"></i>
-            {/if}
-          </button>
-          <span class:done={event.done}>
-            {event.title}
-          </span>
-          <span class="iter">
-            {event.iteration + 1}
-          </span>
-        </div>
-        <div class="links">
-          {#if event.links}
-            {@render linkButton(event.links[0].url, event.links[0].label, true)}
-          {/if}
-          {#each event.links.slice(1) as entry}
-            {@render linkButton(entry.url, entry.label, false, entry.external)}
-          {/each}
-        </div>
-      </li>
+    {#each events.filter(e => !e.done) as event}
+      {@render taskRow(event)}
+    {/each}
+    {#each events.filter(e => e.done) as event}
+      {@render taskRow(event)}
     {/each}
   </ul>
 {/if}
@@ -64,6 +38,36 @@
       {label}
     {/if}
   </button>
+{/snippet}
+
+{#snippet taskRow(event: CalEvent)}
+  <li>
+    <div>
+      <button class="toggler" onclick={() => {
+        event.toggleDone();
+      }}>
+        {#if event.done}
+          ✅
+        {:else}
+          <i class="fa-regular fa-square"></i>
+        {/if}
+      </button>
+      <span class:done={event.done}>
+        {event.title}
+      </span>
+      <span class="iter">
+        {event.iteration + 1}
+      </span>
+    </div>
+    <div class="links">
+      {#if event.links}
+        {@render linkButton(event.links[0].url, event.links[0].label, true)}
+      {/if}
+      {#each event.links.slice(1) as entry}
+        {@render linkButton(entry.url, entry.label, false, entry.external)}
+      {/each}
+    </div>
+  </li>
 {/snippet}
 
 <style>

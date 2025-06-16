@@ -19,6 +19,9 @@
   });
 
   async function updateEvents(from: Date, to: Date): Promise<CalEvent[]> {
+    from = new Date(Date.UTC(from.getFullYear(), from.getMonth(), from.getDate()));
+    to = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate()));
+
     setLoadingState(true);
     const resp = await obtain("/app/task", {
       method: "POST",

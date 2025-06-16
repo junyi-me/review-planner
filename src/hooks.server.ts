@@ -1,18 +1,15 @@
 import { env } from "$env/dynamic/private";
+import { obtain } from "$lib/api.client";
 import { COOKIE, setAuthCookies } from "$lib/server/cookie";
 import { getTokenPayload } from "$lib/server/jwt";
 import { redirect, type Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
   let access = event.cookies.get(COOKIE.ACCESS_TOKEN);
+  const refresh = event.cookies.get(COOKIE.REFRESH_TOKEN);
 
-  if (event.url.pathname.startsWith("/app") && !access) {
-    const refresh = event.cookies.get(COOKIE.REFRESH_TOKEN);
-    if (!refresh) {
-      throw redirect(302, `${env.APP_HOST}/`);
-    }
-
-    const res = await fetch(env.AUTH_TOKEN_URL, {
+  if (!access && refresh) {
+    const res = await obtain(env.AUTH_TOKEN_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -22,7 +19,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         refresh_token: refresh,
         client_id: env.CLIENT_ID,
         client_secret: env.CLIENT_SECRET,
-      })
+      }),
 		});
 
     if (!res.ok) {
@@ -33,6 +30,10 @@ export const handle: Handle = async ({ event, resolve }) => {
     setAuthCookies(event.cookies, data.access_token, data.refresh_token, data.id_token, data.expires_in);
 
     access = data.access_token;
+  }
+
+  if (event.url.pathname.startsWith("/app") && !access) {
+    throw redirect(302, `${env.APP_HOST}/`);
   }
 
   const payload = await getTokenPayload(access!);
