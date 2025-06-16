@@ -15,7 +15,7 @@ export async function POST({ locals, request }: RequestEvent) {
   }
 
   const projs = await db.insert(project).values({
-    ownerId: user.userId,
+    ownerId: user.sub,
     name: pProj.name,
     link: pProj.link,
     description: pProj.description,

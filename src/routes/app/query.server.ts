@@ -21,12 +21,12 @@ export function getProjectPaging(params: URLSearchParams): ProjectsPageOpts {
   return { ...pg, orderBy };
 }
 
-export async function getProjectCount(userId: number) {
+export async function getProjectCount(userId: string) {
   const cnt = await db.select({ count: count() }).from(project).where(eq(project.ownerId, userId));
   return cnt[0].count;
 }
 
-export async function getProjects(opts: ProjectsPageOpts, userId: number) {
+export async function getProjects(opts: ProjectsPageOpts, userId: string) {
   const sq = db.select({
     projectId: task.projectId,
     min_next_iter_at: sql<Date>`min(${task.nextIterAt})`.as(MIN_NEXT_ITER_AT),

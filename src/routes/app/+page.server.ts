@@ -6,8 +6,8 @@ import { getProjectCount, getProjectPaging, getProjects } from "./query.server";
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = getTokenPayload(locals);
   const opts = getProjectPaging(url.searchParams);
-  const projects = await getProjects(opts, user.userId);
-  const count = await getProjectCount(user.userId);
+  const projects = await getProjects(opts, user.sub);
+  const count = await getProjectCount(user.sub);
   return { projects, total: count } as GetProjectResp;
 }
 

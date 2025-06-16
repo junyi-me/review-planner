@@ -1,5 +1,5 @@
 import { relations, type InferSelectModel } from "drizzle-orm";
-import { pgTable, serial, text, integer, timestamp, json, date } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, json, date, serial } from "drizzle-orm/pg-core";
 
 const commonFields = {
   id: serial("id").primaryKey(),
@@ -11,7 +11,6 @@ export const user = pgTable("user", {
   ...commonFields,
   email: text("email").unique().notNull(),
   name: text("name").notNull(),
-  password: text("password").notNull(),
 });
 
 export const userRelation = relations(user, ({ many }) => ({
@@ -20,7 +19,7 @@ export const userRelation = relations(user, ({ many }) => ({
 
 export const project = pgTable("project", {
   ...commonFields,
-  ownerId: integer("owner_id").notNull().references(() => user.id),
+  ownerId: text("owner_id").notNull().references(() => user.id),
   name: text("name").notNull(),
   link: text("link"),
   description: text("description"),

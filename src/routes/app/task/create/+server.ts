@@ -15,7 +15,7 @@ export async function POST({ locals, request }: RequestEvent) {
     return new Response(JSON.stringify(err), { status: 400 });
   }
 
-  const projects = await db.select().from(project).where(and(eq(project.id, pTask.projectId), eq(project.ownerId, user.userId)));
+  const projects = await db.select().from(project).where(and(eq(project.id, pTask.projectId), eq(project.ownerId, user.sub)));
   if (projects.length !== 1) {
     return new Response(null, { status: 404 });
   }

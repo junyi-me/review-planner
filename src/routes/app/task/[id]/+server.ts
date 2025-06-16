@@ -17,9 +17,9 @@ export async function PUT({ params, locals, request }: RequestEvent) {
     return new Response(JSON.stringify(err), { status: 400 });
   }
 
-  const taskProjs = await getTaskForUser(taskId, user.userId);
+  const taskProjs = await getTaskForUser(taskId, user.sub);
   if (taskProjs.length !== 1) {
-    console.error("Task not found", { taskId: pTask.id, userId: user.userId });
+    console.error("Task not found", { taskId: pTask.id, userId: user.sub });
     return new Response(null, { status: 404 });
   }
   const dbTask = taskProjs[0].task;
@@ -45,9 +45,9 @@ export async function DELETE({ params, locals }: RequestEvent) {
   const taskId = parseInt(params.id);
   const user = getTokenPayload(locals);
 
-  const taskProjs = await getTaskForUser(taskId, user.userId);
+  const taskProjs = await getTaskForUser(taskId, user.sub);
   if (taskProjs.length !== 1) {
-    console.error("Task not found", { taskId, userId: user.userId });
+    console.error("Task not found", { taskId, userId: user.sub });
     return new Response(null, { status: 404 });
   }
 

@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
   const projId = parseInt(projIdStr);
   const user = getTokenPayload(locals);
 
-  const projects = await db.select().from(project).where(and(eq(project.ownerId, user.userId), eq(project.id, projId)));
+  const projects = await db.select().from(project).where(and(eq(project.ownerId, user.sub), eq(project.id, projId)));
   if (projects.length !== 1) {
     throw redirect(302, `/app/project/${projId}`);
   }

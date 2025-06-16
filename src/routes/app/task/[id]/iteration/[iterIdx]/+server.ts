@@ -15,9 +15,9 @@ export async function PATCH({ params, locals, request }: RequestEvent) {
   const user = getTokenPayload(locals);
   const body = await request.json() as PatchTaskReq;
 
-  const tasks = await getTaskForUser(taskId, user.userId);
+  const tasks = await getTaskForUser(taskId, user.sub);
   if (tasks.length !== 1) {
-    console.error("Task not found", { taskId, userId: user.userId });
+    console.error("Task not found", { taskId, userId: user.sub });
     return new Response(null, { status: 404 });
   }
   const tsk = tasks[0].task;

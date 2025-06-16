@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ url, params, locals }) => {
 
   let project, tasks;
   try {
-    ({ project, tasks } = await getTasks(user.userId, projId, getTaskPaging(url.searchParams)));
+    ({ project, tasks } = await getTasks(user.sub, projId, getTaskPaging(url.searchParams)));
   } catch (e) {
     console.error("Failed to get tasks", e);
     throw redirect(302, "/app");

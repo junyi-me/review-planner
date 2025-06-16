@@ -26,7 +26,7 @@ export async function getTaskCount(projId: number) {
   return cnt[0].count;
 }
 
-export async function getTasks(userId: number, projId: number, pg: ProjectPageOpts) {
+export async function getTasks(userId: string, projId: number, pg: ProjectPageOpts) {
   const projects = await db.select().from(project)
     .where(and(eq(project.ownerId, userId), eq(project.id, projId)));
   if (projects.length !== 1) {

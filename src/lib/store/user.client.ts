@@ -5,24 +5,32 @@ export type UserInfo = {
   email: string;
   name: string;
 }
-const defaultUser: UserInfo = { email: '', name: '' };
 
-let storedUser: UserInfo = defaultUser;
+let storedUser: UserInfo|null = null;
 if (browser) {
-  storedUser = JSON.parse(localStorage.getItem('user') || 'null') || { email: '', name: '' } as UserInfo;
+  const strUser = localStorage.getItem('user');
+  if (strUser === null) {
+    storedUser = null;
+  } else {
+    storedUser = JSON.parse(strUser) as UserInfo;
+  }
 }
 
-export const user = writable<UserInfo>(storedUser);
+export const localUser = writable<UserInfo|null>(storedUser);
 
 if (browser) {
-  user.subscribe(value => {
+  localUser.subscribe(value => {
+    if (!value) {
+      localStorage.removeItem('user');
+      return;
+    }
     localStorage.setItem('user', JSON.stringify(value));
   });
 }
 
-export const loggedIn = derived(user, $user => $user.email !== '');
+export const loggedIn = derived(localUser, $user => $user !== null);
 
 export function logout() {
-  user.set(defaultUser);
+  localUser.set(null);
 }
 

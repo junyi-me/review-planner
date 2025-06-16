@@ -10,7 +10,7 @@ export async function POST({ locals, request }: RequestEvent) {
   const { from, to } = await request.json() as GetCalendarTasksReq;
   const tasks = await db.select({ task, projectId: project.id }).from(task)
     .leftJoin(project, eq(task.projectId, project.id))
-    .where(and(eq(project.ownerId, user.userId), gte(task.firstIterAt, from), lte(task.firstIterAt, to)))
+    .where(and(eq(project.ownerId, user.sub), gte(task.firstIterAt, from), lte(task.firstIterAt, to)))
   return new Response(JSON.stringify({ tasks }), { status: 200 });
 }
 
