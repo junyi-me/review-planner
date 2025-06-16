@@ -12,6 +12,12 @@ body {
     --gap-huge: 8em;
 
     background-color: var(--bg-1);
+    color: var(--fg-1);
+}
+
+a {
+    color: var(--link);
+    text-decoration: none;
 }
 
 [data-scheme='light'] {
@@ -35,19 +41,26 @@ body {
     --link-active: hsl(208, 77%, 40%);
 }
 
-/* [data-scheme='dark'] { */
-/*     --bg-1: #233142; */
-/*     --bg-2: #455d7a; */
-/*     --fg-1: #ffffff; */
-/*     --fg-2: #e3e3e3; */
-/**/
-/*     --acc-1: #ae3e3e; */
-/*     --acc-2: #632323; */
-/**/
-/*     --link: hsl(206, 96%, 72%); */
-/*     --link-hover: hsl(206, 96%, 78%); */
-/*     --link-active: hsl(206, 96%, 64%); */
-/* } */
+[data-scheme='dark'] {
+    --bg-1: #1e1e1e;         /* Deep neutral background */
+    --bg-2: #2b2b2b;         /* Slightly lighter for surfaces */
+    --bg-danger: #661d1d;    /* Desaturated red */
+    --bg-warn: #665c1d;      /* Muted yellow-brown */
+    --bg-success: #2e4d1d;   /* Muted green */
+    --bg-acc: #593c3c;       /* Soft accent red-brown */
+
+    --fg-1: #d2c9c0;         /* Main foreground text */
+    --fg-2: #c7c7c7;         /* Secondary text */
+    --fg-3: #8a8a8a;         /* Tertiary text */
+    --fg-acc: #ff6e6e;       /* Accent pink-red */
+    --fg-danger: #ff4d4d;    /* Vivid red for errors */
+
+    --border: #444;          /* Subtle border in dark context */
+
+    --link: hsl(208, 77%, 72%);
+    --link-hover: hsl(208, 77%, 80%);
+    --link-active: hsl(208, 77%, 65%);
+}
 
 h1:nth-child(1) {
     margin-top: 0;

@@ -87,6 +87,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--fg-1);
   }
 
   button:disabled {

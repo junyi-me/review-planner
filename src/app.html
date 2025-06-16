@@ -8,11 +8,8 @@
 		%sveltekit.head%
     <script>
       (function() {
-        // Check localStorage for theme
-        // const pref = JSON.parse(localStorage.getItem('content') || '{}').pref || {};
-        // const dark = pref.darkTheme || pref.systemTheme && window.matchMedia('(prefers-color-scheme: dark)').matches || false;
-        // document.documentElement.dataset.scheme = dark ? 'dark' : 'light';
-        document.documentElement.dataset.scheme = 'light';
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
+        document.documentElement.dataset.scheme = dark ? 'dark' : 'light';
       })();
     </script>
 	</head>
