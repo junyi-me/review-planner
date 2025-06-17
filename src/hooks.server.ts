@@ -27,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     const data = await res.json();
-    setAuthCookies(event.cookies, data.access_token, data.refresh_token, data.id_token, data.expires_in);
+    setAuthCookies(event.cookies, data.access_token, data.refresh_token, data.id_token);
 
     access = data.access_token;
   }

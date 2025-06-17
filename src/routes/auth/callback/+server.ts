@@ -50,7 +50,7 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
     });
   }
 
-  setAuthCookies(cookies, data.access_token, data.refresh_token, data.id_token, data.expires_in);
+  setAuthCookies(cookies, data.access_token, data.refresh_token, data.id_token);
   throw redirect(302, '/app');
 }
 

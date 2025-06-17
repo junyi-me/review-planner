@@ -2,23 +2,28 @@ import { relations, type InferSelectModel } from "drizzle-orm";
 import { pgTable, text, integer, timestamp, json, date, serial } from "drizzle-orm/pg-core";
 
 const commonFields = {
-  id: serial("id").primaryKey(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdate(() => new Date()),
 }
 
 export const user = pgTable("user", {
   ...commonFields,
+  id: text("id").primaryKey(),
   email: text("email").unique().notNull(),
   name: text("name").notNull(),
 });
+
+const commonFieldsWithId = {
+  ...commonFields,
+  id: serial("id").primaryKey(),
+}
 
 export const userRelation = relations(user, ({ many }) => ({
   projects: many(project),
 }));
 
 export const project = pgTable("project", {
-  ...commonFields,
+  ...commonFieldsWithId,
   ownerId: text("owner_id").notNull().references(() => user.id),
   name: text("name").notNull(),
   link: text("link"),
@@ -39,7 +44,7 @@ export type Iteration = {
   done: boolean;
 }
 export const task = pgTable("task", {
-  ...commonFields,
+  ...commonFieldsWithId,
   name: text("name").notNull(),
   projectId: integer("project_id").notNull().references(() => project.id),
   link: text("link"),
