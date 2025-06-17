@@ -10,9 +10,9 @@ const COOKIE_OPTIONS = {
   path: '/',
 }
 
-export function setAuthCookies(cookies: Cookies, accessToken: string, refreshToken: string, expiresIn: number) {
-  cookies.set(COOKIE.ACCESS_TOKEN, accessToken, {...COOKIE_OPTIONS, maxAge: expiresIn });
-  cookies.set(COOKIE.REFRESH_TOKEN, refreshToken, { ...COOKIE_OPTIONS, maxAge: 30 * 24 * 60 * 60 }); // 30 days
+export function setAuthCookies(cookies: Cookies, accessToken: string, refreshToken: string, accessExp: number, refreshExp: number = 30 * 24 * 60 * 60) {
+  cookies.set(COOKIE.ACCESS_TOKEN, accessToken, {...COOKIE_OPTIONS, maxAge: accessExp });
+  cookies.set(COOKIE.REFRESH_TOKEN, refreshToken, { ...COOKIE_OPTIONS, maxAge: refreshExp }); // 30 days
 }
 
 export function deleteAuthCookies(cookies: Cookies) {

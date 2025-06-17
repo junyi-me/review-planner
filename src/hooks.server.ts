@@ -1,7 +1,7 @@
 import { env } from "$env/dynamic/private";
 import { obtain } from "$lib/api.client";
 import { COOKIE, setAuthCookies } from "$lib/server/cookie";
-import { getTokenPayload } from "$lib/server/jwt";
+import { decodeAccessToken } from "$lib/server/jwt";
 import { redirect, type Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -27,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     const data = await res.json();
-    setAuthCookies(event.cookies, data.access_token, data.refresh_token, data.id_token);
+    setAuthCookies(event.cookies, data.access_token, data.refresh_token, data.expires_in);
 
     access = data.access_token;
   }
@@ -36,7 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     throw redirect(302, `${env.APP_HOST}/`);
   }
 
-  const payload = await getTokenPayload(access!);
+  const payload = await decodeAccessToken(access!);
   // @ts-ignore
   event.locals.user = payload;
 

@@ -5,7 +5,6 @@ import { user } from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
 import type { RequestEvent } from "../../$types";
 import { json, redirect } from '@sveltejs/kit';
-import { getTokenPayload } from "$lib/server/jwt";
 
 export async function GET({ url, cookies, fetch }: RequestEvent) {
   const code = url.searchParams.get('code');
@@ -28,7 +27,7 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
     const error = await resp.json();
     return json({ error }, { status: 400 });
   }
-  const data = await resp.json();
+  const tokenData = await resp.json();
   /*
   {
     access_token: "...",
@@ -38,7 +37,18 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
     scope: "openid profile email"
   }
   */
-  const userData = (await getTokenPayload(data.access_token))!;
+
+  // get user info from access token
+  const infoResp = await fetch(env.AUTH_INFO_URL, {
+    headers: {
+      Authorization: `Bearer ${tokenData.access_token}`
+    }
+  });
+  if (!infoResp.ok) {
+    console.error('Failed to fetch user info:', await infoResp.text());
+    throw redirect(302, '/'); // TODO error page
+  }
+  const userData = await infoResp.json();
 
   // if new user, insert into database
   const users = await db.select({ id: user.id }).from(user). where(eq(user.email, userData.email));
@@ -50,7 +60,7 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
     });
   }
 
-  setAuthCookies(cookies, data.access_token, data.refresh_token, data.id_token);
+  setAuthCookies(cookies, tokenData.access_token, tokenData.refresh_token, tokenData.expires_in);
   throw redirect(302, '/app');
 }
 
