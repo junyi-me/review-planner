@@ -26,7 +26,3 @@ if (browser) {
 
 export const loggedIn = derived(localUser, $user => $user !== null);
 
-export function logout() {
-  localUser.set(null);
-}
-

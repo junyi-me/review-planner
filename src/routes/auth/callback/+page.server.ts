@@ -3,10 +3,11 @@ import { setAuthCookies } from "$lib/server/cookie";
 import { db } from "$lib/server/db";
 import { user } from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
-import type { RequestEvent } from "../../$types";
 import { json, redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from "./$types";
+import type { UserInfo } from "$lib/api";
 
-export async function GET({ url, cookies, fetch }: RequestEvent) {
+export const load: PageServerLoad = async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
   if (!code) return json({ error: 'Missing code' }, { status: 400 });
 
@@ -25,7 +26,8 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
 
   if (!resp.ok) {
     const error = await resp.json();
-    return json({ error }, { status: 400 });
+    console.error('Failed to exchange code for tokens:', error);
+    throw redirect(302, '/'); // TODO error page
   }
   const tokenData = await resp.json();
   /*
@@ -61,10 +63,9 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
   }
 
   setAuthCookies(cookies, tokenData.access_token, tokenData.refresh_token, tokenData.id_token, tokenData.expires_in);
-  const params = new URLSearchParams({
+  return {
     name: userData.name,
     email: userData.email,
-  });
-  throw redirect(302, '/app?' + params.toString());
+  } as UserInfo;
 }
 
