@@ -1,6 +1,5 @@
 import { db } from "$lib/server/db";
 import { task } from "$lib/server/db/schema";
-import { getTokenPayload } from "$lib/server/util";
 import { eq } from "drizzle-orm";
 import type { RequestEvent } from "./$types";
 import { getTaskForUser } from "$lib/server/db/query";
@@ -12,7 +11,7 @@ type PatchTaskReq = {
 export async function PATCH({ params, locals, request }: RequestEvent) {
   const taskId = parseInt(params.id);
   const iterIdx = parseInt(params.iterIdx);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   const body = await request.json() as PatchTaskReq;
 
   const tasks = await getTaskForUser(taskId, user.sub);

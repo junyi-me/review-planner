@@ -1,12 +1,11 @@
 import type { PageServerLoad } from "./$types";
-import { getTokenPayload } from "$lib/server/util";
 import { redirect } from "@sveltejs/kit";
 import type { PageProps } from "./util";
 import { getTaskCount, getTaskPaging, getTasks } from "./query.server";
 
 export const load: PageServerLoad = async ({ url, params, locals }) => {
   const projId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
 
   let project, tasks;
   try {

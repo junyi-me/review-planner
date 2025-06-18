@@ -1,11 +1,10 @@
 import { validateProject, type PutProjectReq } from "$lib/api";
 import { db } from "$lib/server/db";
 import { project } from "$lib/server/db/schema";
-import { getTokenPayload } from "$lib/server/util";
 import type { RequestEvent } from "./$types";
 
 export async function POST({ locals, request }: RequestEvent) {
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   const body = await request.json() as PutProjectReq;
   const pProj = body.project;
 

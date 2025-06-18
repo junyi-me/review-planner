@@ -1,14 +1,13 @@
 import { task } from "$lib/server/db/schema";
 import { eq } from 'drizzle-orm';
 import type { RequestEvent } from "./$types";
-import { getTokenPayload } from "$lib/server/util";
 import { validateTask, type PutTaskReq, type PutTaskResp } from "$lib/api";
 import { db } from "$lib/server/db";
 import { getTaskForUser } from "$lib/server/db/query";
 
 export async function PUT({ params, locals, request }: RequestEvent) {
   const taskId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   const body = await request.json() as PutTaskReq;
   const pTask = body.task;
 
@@ -43,7 +42,7 @@ export async function PUT({ params, locals, request }: RequestEvent) {
 
 export async function DELETE({ params, locals }: RequestEvent) {
   const taskId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
 
   const taskProjs = await getTaskForUser(taskId, user.sub);
   if (taskProjs.length !== 1) {

@@ -1,5 +1,4 @@
 import type { RequestEvent } from "./$types";
-import { getTokenPayload } from "$lib/server/util";
 import { validateProject, type PutProjectReq } from "$lib/api";
 import { and, eq } from "drizzle-orm";
 import { project, task } from "$lib/server/db/schema";
@@ -13,14 +12,14 @@ async function getProjectForUser(projId: number, userId: string) {
 
 export async function GET({ url, params, locals }: RequestEvent) {
   const projId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   let { tasks } = await getTasks(user.sub, projId, getTaskPaging(url.searchParams));
   return new Response(JSON.stringify({ tasks }), { status: 200 });
 }
 
 export async function PUT({ params, locals, request }: RequestEvent) {
   const projId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   const body = await request.json() as PutProjectReq;
   const pProj = body.project;
 
@@ -46,7 +45,7 @@ export async function PUT({ params, locals, request }: RequestEvent) {
 
 export async function DELETE({ params, locals }: RequestEvent) {
   const projId = parseInt(params.id);
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
 
   const projects = await getProjectForUser(projId, user.sub);
   if (projects.length !== 1) {

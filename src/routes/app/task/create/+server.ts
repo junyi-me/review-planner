@@ -2,11 +2,10 @@ import { db } from "$lib/server/db";
 import { project, task } from "$lib/server/db/schema";
 import { and, eq } from 'drizzle-orm';
 import type { RequestEvent } from "@sveltejs/kit";
-import { getTokenPayload } from "$lib/server/util";
 import { validateTask, type CreateTaskReq } from "$lib/api";
 
 export async function POST({ locals, request }: RequestEvent) {
-  const user = getTokenPayload(locals);
+  const user = locals.user!;
   const body = await request.json() as CreateTaskReq;
   const pTask = body.task;
 

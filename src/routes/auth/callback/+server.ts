@@ -60,7 +60,11 @@ export async function GET({ url, cookies, fetch }: RequestEvent) {
     });
   }
 
-  setAuthCookies(cookies, tokenData.access_token, tokenData.refresh_token, tokenData.expires_in);
-  throw redirect(302, '/app');
+  setAuthCookies(cookies, tokenData.access_token, tokenData.refresh_token, tokenData.id_token, tokenData.expires_in);
+  const params = new URLSearchParams({
+    name: userData.name,
+    email: userData.email,
+  });
+  throw redirect(302, '/app?' + params.toString());
 }
 

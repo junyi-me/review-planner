@@ -1,16 +1,15 @@
 import { env } from "$env/dynamic/private";
-import { obtain } from "$lib/api.client";
 import { COOKIE, setAuthCookies } from "$lib/server/cookie";
 import type { RequestEvent } from "../../$types";
 import { redirect } from '@sveltejs/kit';
 
-export async function GET({ url, cookies }: RequestEvent) {
+export async function GET({ request, url, cookies }: RequestEvent) {
   const refresh = cookies.get(COOKIE.REFRESH_TOKEN);
   if (!refresh) {
-    return redirect(302, "/");
+    return redirect(302, "/auth/logout");
   }
 
-  const res = await obtain(env.AUTH_TOKEN_URL, {
+  const res = await fetch(env.AUTH_TOKEN_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -27,8 +26,11 @@ export async function GET({ url, cookies }: RequestEvent) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
   }
   const data = await res.json();
-  setAuthCookies(cookies, data.access_token, data.refresh_token, data.expires_in);
+  setAuthCookies(cookies, data.access_token, data.refresh_token, data.id_token, data.expires_in);
 
+  if (request.headers.get("Content-Type") === "application/json") {
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
   return redirect(302, url.searchParams.get('redirect') || '/app');
 }
 

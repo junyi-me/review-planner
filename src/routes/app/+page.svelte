@@ -1,14 +1,20 @@
 <script lang="ts">
-  import type { GetProjectResp } from "$lib/api";
+  import type { AppData } from "$lib/api";
+    import { localUser } from "$lib/store/user.client";
   import Projects from "./Projects.svelte";
   import Tasks from "./Tasks.svelte";
 
-  let { data }: { data: GetProjectResp } = $props();
+  const { data }: { data: AppData } = $props();
+  const { user, projects } = data;
+
+  if (user) {
+    localUser.set(user);
+  }
 </script>
 
 <div class="container">
   <Tasks />
-  <Projects projects={data.projects} total={data.total} />
+  <Projects projects={projects.projects} total={projects.total} />
 </div>
 
 <style>

@@ -48,6 +48,16 @@ export type GetProjectResp = {
   total: number;
 }
 
+export type UserInfo = {
+  name: string;
+  email: string;
+}
+
+export type AppData = {
+  user: UserInfo | null;
+  projects: GetProjectResp;
+}
+
 export function validateProject(project: ProjectPartial) {
   if (project.name === "") {
     return "Project must have a name";

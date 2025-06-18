@@ -1,14 +1,23 @@
+import { goto } from "$app/navigation";
 import { setLoadingState, setToastState } from "./store/global.svelte";
+
+async function refreshToken() {
+  const response = await fetch("/auth/refresh");
+  if (response.ok) {
+    return true;
+  }
+  return false;
+};
+
+const defaultHeaders = {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+};
 
 export async function obtain(url?: string, options: RequestInit = {}) {
   if (!url) {
     url = window.location.pathname;
   }
-
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-  };
 
   const newOpts: RequestInit = {
     ...options,
@@ -18,7 +27,19 @@ export async function obtain(url?: string, options: RequestInit = {}) {
     },
   };
 
-  return await fetch(url, newOpts);
+  const resp = await fetch(url, newOpts);
+  if (resp.status === 401) {
+    const refreshed = await refreshToken();
+    if (refreshed) {
+      // Retry the original request
+      return fetch(url, newOpts);
+    } else {
+      // If refresh fails, redirect to logout
+      goto('/auth/logout');
+    }
+  }
+
+  return resp;
 }
 
 export async function setIterDone(taskId: number, iterIdx: number, done: boolean) {

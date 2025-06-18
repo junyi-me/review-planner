@@ -2,14 +2,11 @@
   import { navigating } from "$app/state";
   import Loading from "$lib/component/Loading.svelte";
   import Toast from "$lib/component/Toast.svelte";
-  import type { TokenPayload } from "$lib/server/jwt.js";
   import { loadingState } from "$lib/store/global.svelte";
-  import { loggedIn, localUser } from "$lib/store/user.client";
+  import { loggedIn } from "$lib/store/user.client";
   import '@fortawesome/fontawesome-free/css/all.min.css'
 
-  let { children, data } = $props();
-  const { user } = data as { user?: TokenPayload };
-  localUser.set(user ?? null);
+  let { children } = $props();
 </script>
 
 <svelte:head>

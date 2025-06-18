@@ -4,14 +4,10 @@
   import { onMount } from "svelte";
 
   onMount(() => {
-    if ($localUser) {
-      goto("/auth/refresh", {
-        replaceState: true,
-      });
-    }
-  });
+    localUser.set(null);
+    goto("/", { replaceState: true, invalidateAll: true });
+  })
 </script>
 
-<h1>Review Planner</h1>
-<p>Description goes here.</p>
+<p>Logging you out...</p>
 

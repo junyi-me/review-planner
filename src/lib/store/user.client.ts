@@ -1,10 +1,6 @@
 import { browser } from "$app/environment";
+import type { UserInfo } from "$lib/api";
 import { derived, writable } from "svelte/store";
-
-export type UserInfo = {
-  email: string;
-  name: string;
-}
 
 let storedUser: UserInfo|null = null;
 if (browser) {
