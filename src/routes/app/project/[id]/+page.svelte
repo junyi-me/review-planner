@@ -51,10 +51,12 @@
     sortBy: "next_iter_at",
     search: null,
   }
+  let paging: PageOpts = $state(initPageOpts);
 
   async function handleSort(pg: PageOpts) {
     setLoadingState(true);
 
+    paging = pg;
     const resp = await obtain(`/app/project/${project.id}?${getPgParams(pg)}`);
 
     if (!resp.ok) {
@@ -92,7 +94,7 @@
           {/if}
           {#each tasks as _, i}
             <Tr>
-              <Td>{i+1}</Td>
+              <Td>{i + 1 + (paging.page - 1) * paging.pageSize}</Td>
               <TaskRow bind:task={tasks[i]} />
             </Tr>
           {/each}

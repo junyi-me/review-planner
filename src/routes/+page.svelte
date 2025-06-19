@@ -1,17 +1,3 @@
-<script>
-  import { goto } from "$app/navigation";
-  import { localUser } from "$lib/store/user.client";
-  import { onMount } from "svelte";
-
-  onMount(() => {
-    if ($localUser) {
-      goto("/auth/refresh", {
-        replaceState: true,
-      });
-    }
-  });
-</script>
-
 <h1>Review Planner</h1>
 <p>Description goes here.</p>
 

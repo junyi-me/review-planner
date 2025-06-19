@@ -23,7 +23,7 @@ export async function GET({ request, url, cookies }: RequestEvent) {
   });
 
   if (!res.ok) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    throw redirect(302, "/auth/logout");
   }
   const data = await res.json();
   setAuthCookies(cookies, data.access_token, data.refresh_token, data.id_token, data.expires_in);
@@ -31,6 +31,6 @@ export async function GET({ request, url, cookies }: RequestEvent) {
   if (request.headers.get("Content-Type") === "application/json") {
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json" } });
   }
-  return redirect(302, url.searchParams.get('redirect') || '/app');
+  throw redirect(302, url.searchParams.get('redirect') || '/app');
 }
 

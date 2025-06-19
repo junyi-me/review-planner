@@ -10,12 +10,7 @@
     total: number;
     initPageOpts: PageOpts;
   }
-  let {
-    columns,
-    dtProps,
-    children, 
-    ...restProps
-  }: {
+  let { columns, dtProps, children, ...restProps }: {
     columns: TableCol[];
     dtProps?: DataTableProps;
     children: any;

@@ -31,10 +31,10 @@
     search: null, // TODO
   };
 
-  let pageOpts = $state(initPageOpts);
+  let paging = $state(initPageOpts);
   async function handleSearch(pgOpts: PageOpts) {
     setLoadingState(true);
-    pageOpts = pgOpts;
+    paging = pgOpts;
 
     const resp = await obtain(`/app?${getPgParams(pgOpts)}`);
 
@@ -52,7 +52,7 @@
 
   $effect(() => {
     if (reloadProjState.loading) {
-      handleSearch(pageOpts);
+      handleSearch(paging);
       setReloadProjState(false);
     }
   });
@@ -67,7 +67,7 @@
     {/if}
     {#each projectTasks as pt, i}
       <Tr>
-        <Td>{i + 1}</Td>
+        <Td>{i + 1 + (paging.page - 1) * paging.pageSize}</Td>
         <Td>
           <a href="/app/project/{pt.project.id}/">{pt.project.name}</a>
           {#if pt.project.link}
